@@ -31,9 +31,6 @@ const posts = (await getCollection('blog'))
 				padding-bottom: 2rem;
 				border-bottom: 1px solid rgb(var(--gray-light));
 			}
-			.intro h1 {
-				margin-bottom: 0.5rem;
-			}
 			.intro p {
 				color: rgb(var(--gray));
 				margin: 0;
@@ -103,7 +100,6 @@ const posts = (await getCollection('blog'))
 		<Header lang={lang} />
 		<main>
 			<section class="intro">
-				<h1>{t('home.welcome')}</h1>
 				<p>{t('home.intro')}</p>
 			</section>
 			<section>

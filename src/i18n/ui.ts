@@ -14,9 +14,8 @@ export const ui = {
 		'nav.home': 'Home',
 		'nav.blog': 'Blog',
 		'nav.about': 'About',
-		'home.welcome': 'Welcome',
 		'home.intro':
-			"I'm Sunhong Min, an SRE/DevOps Engineer sharing insights on cloud infrastructure, Kubernetes, automation, and software engineering.",
+			"Hi, I'm Sunhong (Shawn) Min, an SRE/DevOps Engineer sharing insights on cloud infrastructure, Kubernetes, automation, and software engineering.",
 		'home.recentPosts': 'Recent Posts',
 		'home.viewAll': 'View all posts',
 		'blog.lastUpdated': 'Last updated on',
@@ -28,7 +27,6 @@ export const ui = {
 		'nav.home': '홈',
 		'nav.blog': '블로그',
 		'nav.about': '소개',
-		'home.welcome': '환영합니다',
 		'home.intro':
 			'안녕하세요, 클라우드 인프라, Kubernetes, 자동화, 소프트웨어 엔지니어링에 대한 인사이트를 공유하는 SRE/DevOps 엔지니어 민선홍입니다.',
 		'home.recentPosts': '최근 글',
