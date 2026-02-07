@@ -3,6 +3,7 @@ import type { Lang } from '../i18n/ui';
 import { useTranslations } from '../i18n/utils';
 import HeaderLink from './HeaderLink.astro';
 import LanguageToggle from './LanguageToggle.astro';
+import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
 	lang?: Lang;
@@ -21,6 +22,7 @@ const t = useTranslations(lang);
 			<HeaderLink href={`/${lang}/about`}>{t('nav.about')}</HeaderLink>
 		</div>
 		<div class="social-links">
+			<ThemeToggle />
 			<LanguageToggle lang={lang} />
 			<a href="https://github.com/sunhongmin225" target="_blank">
 				<span class="sr-only">GitHub</span>
@@ -47,7 +49,7 @@ const t = useTranslations(lang);
 	header {
 		margin: 0;
 		padding: 0 1em;
-		background: white;
+		background: var(--surface, white);
 		box-shadow: 0 2px 8px rgba(var(--black), 5%);
 	}
 	h2 {
@@ -66,7 +68,7 @@ const t = useTranslations(lang);
 	}
 	nav a {
 		padding: 1em 0.5em;
-		color: var(--black);
+		color: rgb(var(--black));
 		border-bottom: 4px solid transparent;
 		text-decoration: none;
 	}

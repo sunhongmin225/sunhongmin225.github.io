@@ -1,0 +1,111 @@
+<button class="theme-toggle" type="button" aria-label="Toggle theme">
+	<!-- Monitor (System) -->
+	<svg class="icon icon-system" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+		<line x1="8" y1="21" x2="16" y2="21"></line>
+		<line x1="12" y1="17" x2="12" y2="21"></line>
+	</svg>
+	<!-- Sun (Light) -->
+	<svg class="icon icon-light" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<circle cx="12" cy="12" r="5"></circle>
+		<line x1="12" y1="1" x2="12" y2="3"></line>
+		<line x1="12" y1="21" x2="12" y2="23"></line>
+		<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+		<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+		<line x1="1" y1="12" x2="3" y2="12"></line>
+		<line x1="21" y1="12" x2="23" y2="12"></line>
+		<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+		<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+	</svg>
+	<!-- Moon (Dark) -->
+	<svg class="icon icon-dark" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+	</svg>
+</button>
+
+<script is:inline>
+	(function(){
+		var STATES = ['system', 'light', 'dark'];
+		var mq = matchMedia('(prefers-color-scheme: dark)');
+
+		function getStored() {
+			return localStorage.getItem('preferred-theme') || 'system';
+		}
+
+		function applyTheme(pref) {
+			var isDark = pref === 'system' ? mq.matches : pref === 'dark';
+			if (isDark) {
+				document.documentElement.setAttribute('data-theme', 'dark');
+			} else {
+				document.documentElement.removeAttribute('data-theme');
+			}
+			// Update all toggle buttons on the page
+			document.querySelectorAll('.theme-toggle').forEach(function(btn) {
+				btn.setAttribute('data-state', pref);
+			});
+		}
+
+		function init() {
+			var pref = getStored();
+			applyTheme(pref);
+		}
+
+		// Handle click on any theme toggle
+		document.addEventListener('click', function(e) {
+			var btn = e.target.closest('.theme-toggle');
+			if (!btn) return;
+			var current = getStored();
+			var idx = STATES.indexOf(current);
+			var next = STATES[(idx + 1) % STATES.length];
+			localStorage.setItem('preferred-theme', next);
+			applyTheme(next);
+		});
+
+		// Listen for system preference changes (only matters in "system" mode)
+		mq.addEventListener('change', function() {
+			if (getStored() === 'system') {
+				applyTheme('system');
+			}
+		});
+
+		init();
+	})();
+</script>
+
+<style>
+	.theme-toggle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.35em;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 999px;
+		background: none;
+		color: rgb(var(--gray-dark));
+		cursor: pointer;
+		transition: 0.2s ease;
+	}
+	.theme-toggle:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+	.theme-toggle .icon {
+		display: none;
+	}
+	/* Default: show system icon */
+	.theme-toggle .icon-system {
+		display: block;
+	}
+	.theme-toggle[data-state="light"] .icon-system {
+		display: none;
+	}
+	.theme-toggle[data-state="light"] .icon-light {
+		display: block;
+	}
+	.theme-toggle[data-state="dark"] .icon-system {
+		display: none;
+	}
+	.theme-toggle[data-state="dark"] .icon-dark {
+		display: block;
+	}
+</style>
