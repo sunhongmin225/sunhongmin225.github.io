@@ -88,7 +88,7 @@ Drata는 GRC(Governance, Risk, Compliance) 플랫폼으로 AI 기반 자동화�
 
 #### 협업 서비스 연결
 
-<!-- TODO: replace with actual image — Blux's connected services to Drata platform -->
+<!-- TODO: replace with actual image — blux's connected services to Drata platform -->
 
 슬랙, 구글 워크스페이스, AWS, 몽고DB 아틀라스, 깃허브 등 다양한 업무 협업 서비스를 Drata와 연결하여 자동화 기능을 활용했습니다.
 
@@ -105,7 +105,7 @@ Drata는 GRC(Governance, Risk, Compliance) 플랫폼으로 AI 기반 자동화�
 
 #### 보안 정책 작성
 
-<!-- TODO: replace with actual image — Blux's security policies list -->
+<!-- TODO: replace with actual image — blux's security policies list -->
 
 23개의 보안 정책을 정비했습니다. 주요 정책:
 - Asset Management Policy: 조직 내 자산 관리 기준

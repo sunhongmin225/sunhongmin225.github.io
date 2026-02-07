@@ -17,9 +17,9 @@ In this post, we'll walk through how to use HPA and Karpenter to autoscale when 
 
 ## When Do You Need Autoscaling?
 
-Below is a graph showing the resource usage of one of our Blux applications. The horizontal axis represents 24 hours, and the vertical axis shows vCPU usage normalized against the minimum.
+Below is a graph showing the resource usage of one of our blux applications. The horizontal axis represents 24 hours, and the vertical axis shows vCPU usage normalized against the minimum.
 
-<!-- TODO: replace with actual image - Blux resource usage graph -->
+<!-- TODO: replace with actual image - blux resource usage graph -->
 
 As you can see, resource usage is low during sleeping hours (2 AM–8 AM), gradually increases throughout the day, and drops again after midnight.
 

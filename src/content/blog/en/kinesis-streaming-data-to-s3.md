@@ -7,7 +7,7 @@ heroImage: ../../../assets/kinesis-streaming-data-to-s3-hero.png
 
 > **Originally published** on the [blux Tech Blog](https://blog.blux.ai/kinesis-%EC%8A%A4%ED%8A%B8%EB%A6%AC%EB%B0%8D-%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%B2%98%EB%A6%AC-%EC%95%84%ED%82%A4%ED%85%8D%EC%B3%90-0522). Republished here on the author's personal blog.
 
-At Blux, we operate servers that collect customer behavioral data in real time and make it available across multiple services. With the upcoming launch of our new CRM marketing solution, we needed to build a new data pipeline architecture — one capable of processing large volumes of data in real time and making collected data easily accessible from multiple places. In this post, I'll explain why we chose Kinesis Data Streams as our real-time data streaming service.
+At blux, we operate servers that collect customer behavioral data in real time and make it available across multiple services. With the upcoming launch of our new CRM marketing solution, we needed to build a new data pipeline architecture — one capable of processing large volumes of data in real time and making collected data easily accessible from multiple places. In this post, I'll explain why we chose Kinesis Data Streams as our real-time data streaming service.
 
 ## Why We Adopted Kinesis Data Streams
 

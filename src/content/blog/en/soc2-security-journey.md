@@ -1,6 +1,6 @@
 ---
-title: "Blux's SOC 2 Security Journey and the Record We Left Behind"
-description: "Not sure where to start with SOC 2 preparation? Here are real-world insights from Blux's experience that you won't find through a simple search."
+title: "blux's SOC 2 Security Journey and the Record We Left Behind"
+description: "Not sure where to start with SOC 2 preparation? Here are real-world insights from blux's experience that you won't find through a simple search."
 pubDate: 2025-03-31
 heroImage: ../../../assets/soc2-security-journey-hero.png
 ---
@@ -17,7 +17,7 @@ Many SaaS companies fall into five common misconceptions when preparing for secu
 4. "You need a large security team to pass the certification"
 5. "You must hire a security specialist to pass the certification"
 
-At Blux, we corrected these misconceptions one by one during our preparation, turning the SOC 2 certification process into an opportunity to review and improve our overall security posture — not just check a box.
+At blux, we corrected these misconceptions one by one during our preparation, turning the SOC 2 certification process into an opportunity to review and improve our overall security posture — not just check a box.
 
 ## What Is SOC 2, and Why Does It Matter?
 
@@ -33,7 +33,7 @@ SOC 2 is a service organization control report established by the American Insti
 - **Confidentiality** – Sensitive information protection, data access restrictions, encryption
 - **Privacy** – Personal data collection, retention, disposal, and policy compliance
 
-Security is mandatory, while the rest are optionally applied based on the organization's needs. Blux selected Security, Availability, and Confidentiality.
+Security is mandatory, while the rest are optionally applied based on the organization's needs. blux selected Security, Availability, and Confidentiality.
 
 ### SOC 2 Report Types
 
@@ -50,7 +50,7 @@ When people say "passed SOC 2," they typically mean SOC 2 Type II.
 
 ### Building Customer Trust and Entering Global Markets
 
-Many enterprise customers — especially large corporations and global companies — require SOC 2 or equivalent security certifications as a prerequisite for adopting SaaS products. Blux also experienced SOC 2 certification being a precondition for enterprise partnerships, demonstrating that passing a security standard certification is not just an internal achievement — it plays a crucial role in building trust with external customers.
+Many enterprise customers — especially large corporations and global companies — require SOC 2 or equivalent security certifications as a prerequisite for adopting SaaS products. blux also experienced SOC 2 certification being a precondition for enterprise partnerships, demonstrating that passing a security standard certification is not just an internal achievement — it plays a crucial role in building trust with external customers.
 
 <!-- TODO: replace with actual image — LinkedIn post about security certifications as B2B SaaS prerequisite -->
 
@@ -62,11 +62,11 @@ SOC 2 is a powerful tool for accelerating the sales process and gaining a compet
 
 The SOC 2 preparation process becomes a catalyst for meaningfully elevating the entire organization's security posture. It includes establishing security policies, building risk assessment frameworks, and implementing technical measures within cloud infrastructure — laying the foundation for a sustainable security operations program.
 
-## Blux's SOC 2 Certification Journey
+## blux's SOC 2 Certification Journey
 
 ### August 2024 – Selecting a Compliance SaaS Platform
 
-Blux began by selecting a compliance SaaS tool for SOC 2 preparation. Our evaluation criteria included:
+blux began by selecting a compliance SaaS tool for SOC 2 preparation. Our evaluation criteria included:
 
 - **Startup-friendliness**: Real-time support channels like Slack Connect
 - **Onboarding speed**: Timeline and customer responsiveness
@@ -88,7 +88,7 @@ Drata is a GRC (Governance, Risk, Compliance) platform that supports audit-ready
 
 #### Connecting Business Services
 
-<!-- TODO: replace with actual image — Blux's connected services to Drata platform -->
+<!-- TODO: replace with actual image — blux's connected services to Drata platform -->
 
 We connected various business collaboration services to Drata — including Slack, Google Workspace, AWS, MongoDB Atlas, and GitHub — to leverage automation capabilities.
 
@@ -105,7 +105,7 @@ We installed the Drata agent on each team member's device to automatically verif
 
 #### Writing Security Policies
 
-<!-- TODO: replace with actual image — Blux's security policies list -->
+<!-- TODO: replace with actual image — blux's security policies list -->
 
 We established 23 security policies. Key policies included:
 - Asset Management Policy: Standards for managing organizational assets
@@ -118,7 +118,7 @@ We identified approximately 60 risks and evaluated mitigation strategies for eac
 
 #### Leveraging AWS Security Services
 
-| Service | Description | Blux's Use Case |
+| Service | Description | blux's Use Case |
 |---------|-------------|----------------|
 | AWS CloudTrail | Records user activity and API calls within AWS accounts | Tracking who did what, when; identifying root causes of security incidents |
 | Amazon Inspector | Automatically analyzes vulnerabilities and misconfigurations in AWS environments | Automated vulnerability scanning for EC2 instances and container images |
@@ -145,7 +145,7 @@ This pre-audit allowed us to reduce unnecessary rework and proactively address i
 
 <!-- TODO: replace with actual image — Google Sheet tracking Type I audit progress -->
 
-AssuranceLab diagnosed Blux's current security control status and detailed areas needing improvement. We communicated in real-time through Google Sheets, tracking requirement items, inquiries, and evidence submission status. For example, we submitted GitHub Actions and ArgoCD implementations as evidence for CI/CD environment controls.
+AssuranceLab diagnosed blux's current security control status and detailed areas needing improvement. We communicated in real-time through Google Sheets, tracking requirement items, inquiries, and evidence submission status. For example, we submitted GitHub Actions and ArgoCD implementations as evidence for CI/CD environment controls.
 
 ### December 18, 2024 – SOC 2 Type I Report Issued
 
@@ -175,32 +175,32 @@ We also provided detailed descriptions when requesting help from Drata's support
 
 ### Never Compromise on Quality
 
-It's tempting to think "let's just pass the certification," but through our SOC 2 preparation, Blux confirmed that genuinely improving security posture ultimately brings greater benefits.
+It's tempting to think "let's just pass the certification," but through our SOC 2 preparation, blux confirmed that genuinely improving security posture ultimately brings greater benefits.
 
 <!-- TODO: replace with actual image — Rising cyber attack trends -->
 
 In a world where cyber threats are rapidly increasing globally, superficial security measures are no longer enough. We didn't just apply security measures to meet the minimum criteria — we continuously sought the best ways to actually reduce security threats.
 
-For example, basic WAF settings would have been sufficient for the external threat response requirements, but for real protection, we conducted various experiments and analyses to design and implement WAF policies optimized for Blux's environment. We were convinced that "a security architecture based on best practices will become the core asset protecting our product and organization."
+For example, basic WAF settings would have been sufficient for the external threat response requirements, but for real protection, we conducted various experiments and analyses to design and implement WAF policies optimized for blux's environment. We were convinced that "a security architecture based on best practices will become the core asset protecting our product and organization."
 
 <!-- TODO: replace with actual image — AWS FTR certification badge -->
 
-For companies attempting SOC 2 for the first time, we recommend starting with AWS FTR (Foundational Technical Review). Blux obtained AWS FTR in April 2024, and the experience of establishing AWS best-practice security measures made our SOC 2 preparation significantly smoother.
+For companies attempting SOC 2 for the first time, we recommend starting with AWS FTR (Foundational Technical Review). blux obtained AWS FTR in April 2024, and the experience of establishing AWS best-practice security measures made our SOC 2 preparation significantly smoother.
 
-## Beyond SOC 2: Blux's Continuing Security Story
+## Beyond SOC 2: blux's Continuing Security Story
 
-Blux isn't stopping at SOC 2 — our next goal is to continuously strengthen our actual security posture.
+blux isn't stopping at SOC 2 — our next goal is to continuously strengthen our actual security posture.
 
 First, we plan to sequentially address security improvement tasks that were deferred based on priority during the certification process. We'll proactively remediate items discovered by Amazon Inspector that had low severity scores, optimize incident response procedures, and strengthen our overall security processes.
 
-Additionally, Blux plans to pursue **ISO 27001** (International Information Security Management System Standard). While SOC 2 primarily focuses on verifying security control levels for B2B SaaS and cloud service companies, ISO 27001 provides a systematic management framework for identifying, assessing, and continuously improving information security risks regardless of industry or organization type.
+Additionally, blux plans to pursue **ISO 27001** (International Information Security Management System Standard). While SOC 2 primarily focuses on verifying security control levels for B2B SaaS and cloud service companies, ISO 27001 provides a systematic management framework for identifying, assessing, and continuously improving information security risks regardless of industry or organization type.
 
 After completing ISO 27001, we also plan to pursue **ISMS-P** (Information Security and Personal Information Protection Management System Certification). ISMS-P is a nationally accredited certification managed by the Korea Internet & Security Agency (KISA), officially certifying that a company safely protects customer personal information. It integrates information security (ISMS) and personal information protection (PIMS) standards, and has become an essential requirement for SaaS companies serving customers in finance, healthcare, and the public sector.
 
-Through these two additional security standards, Blux aims to build the foundation for expanding into strictly regulated industries and to continuously grow as a SaaS company with world-class security capabilities trusted by both domestic and international customers.
+Through these two additional security standards, blux aims to build the foundation for expanding into strictly regulated industries and to continuously grow as a SaaS company with world-class security capabilities trusted by both domestic and international customers.
 
 ---
 
-**Author: Shawn Min — Information Security and DevOps Lead at Blux**
+**Author: Shawn Min — Information Security and DevOps Lead at blux**
 
 "I believe great services cannot exist without a high level of security and robust infrastructure. I constantly strive to build products that customers can trust and rely on."
