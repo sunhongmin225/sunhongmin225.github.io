@@ -1,0 +1,47 @@
+---
+import { languages, type Lang } from '../i18n/ui';
+import { getLocalizedPath } from '../i18n/utils';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const targetLang: Lang = lang === 'en' ? 'ko' : 'en';
+const targetPath = getLocalizedPath(Astro.url.pathname, targetLang);
+---
+
+<a href={targetPath} class="lang-toggle" data-target-lang={targetLang}>
+	{languages[targetLang]}
+</a>
+
+<script is:inline>
+	document.addEventListener('click', function (e) {
+		var toggle = e.target.closest('.lang-toggle');
+		if (toggle) {
+			var targetLang = toggle.getAttribute('data-target-lang');
+			if (targetLang) {
+				localStorage.setItem('preferred-lang', targetLang);
+			}
+		}
+	});
+</script>
+
+<style>
+	.lang-toggle {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.25em 0.75em;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 999px;
+		font-size: 0.85rem;
+		color: rgb(var(--gray-dark));
+		text-decoration: none;
+		transition: 0.2s ease;
+		white-space: nowrap;
+	}
+	.lang-toggle:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+</style>

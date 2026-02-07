@@ -1,9 +1,18 @@
 ---
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+	lang?: Lang;
+}
+
+const { lang = 'en' } = Astro.props;
+const t = useTranslations(lang);
 const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} Sunhong Min. All rights reserved.
+	&copy; {today.getFullYear()} {t('footer.copyright')}
 	<div class="social-links">
 		<a href="https://github.com/sunhongmin225" target="_blank">
 			<span class="sr-only">GitHub</span>

@@ -1,0 +1,106 @@
+---
+import Layout from '../../layouts/BlogPost.astro';
+import { languages, type Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+	return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+---
+
+{
+	lang === 'en' ? (
+		<Layout
+			title="About Me"
+			description="SRE/DevOps Engineer passionate about cloud infrastructure and automation"
+			pubDate={new Date('December 19 2025')}
+			lang={lang}
+		>
+			<h2>Hi, I'm Sunhong Min</h2>
+			<p>
+				I'm an SRE/DevOps Engineer specializing in cloud infrastructure and automation. I'm passionate
+				about building reliable, scalable systems and sharing knowledge with the tech community.
+			</p>
+
+			<h3>What I Do</h3>
+			<p>
+				My day-to-day work involves designing and maintaining cloud-native infrastructure, with a
+				focus on:
+			</p>
+			<ul>
+				<li>
+					<strong>Cloud & Kubernetes:</strong> AWS (EKS, IAM, VPC), Karpenter, Helm
+				</li>
+				<li>
+					<strong>Infrastructure as Code:</strong> Pulumi, Terraform, GitOps with Argo CD
+				</li>
+				<li>
+					<strong>CI/CD:</strong> GitHub Actions, automated deployments
+				</li>
+				<li>
+					<strong>Observability:</strong> Monitoring, logging, and incident response
+				</li>
+			</ul>
+
+			<h3>Why This Blog?</h3>
+			<p>
+				This blog is where I document my learnings, share solutions to problems I've encountered, and
+				explore new technologies. Whether it's a deep dive into Kubernetes networking or a quick tip
+				for debugging production issues, I hope you find something useful here.
+			</p>
+
+			<h3>Get in Touch</h3>
+			<p>
+				Feel free to connect with me on{' '}
+				<a href="https://github.com/sunhongmin225">GitHub</a> or{' '}
+				<a href="https://www.linkedin.com/in/sunhongmin">LinkedIn</a>. I'm always happy to discuss
+				tech, collaborate on projects, or just chat about the industry.
+			</p>
+		</Layout>
+	) : (
+		<Layout
+			title="소개"
+			description="클라우드 인프라와 자동화를 전문으로 하는 SRE/DevOps 엔지니어"
+			pubDate={new Date('December 19 2025')}
+			lang={lang}
+		>
+			<h2>안녕하세요, 민선홍입니다</h2>
+			<p>
+				클라우드 인프라와 자동화를 전문으로 하는 SRE/DevOps 엔지니어입니다. 안정적이고 확장 가능한
+				시스템을 구축하고 기술 커뮤니티와 지식을 나누는 것에 열정을 가지고 있습니다.
+			</p>
+
+			<h3>주요 업무</h3>
+			<p>클라우드 네이티브 인프라의 설계 및 운영을 담당하고 있으며, 주요 기술 분야는 다음과 같습니다:</p>
+			<ul>
+				<li>
+					<strong>클라우드 & Kubernetes:</strong> AWS (EKS, IAM, VPC), Karpenter, Helm
+				</li>
+				<li>
+					<strong>Infrastructure as Code:</strong> Pulumi, Terraform, GitOps (Argo CD)
+				</li>
+				<li>
+					<strong>CI/CD:</strong> GitHub Actions, 자동화 배포
+				</li>
+				<li>
+					<strong>Observability:</strong> 모니터링, 로깅, 장애 대응
+				</li>
+			</ul>
+
+			<h3>블로그를 시작한 이유</h3>
+			<p>
+				이 블로그는 제가 배운 것들을 기록하고, 겪었던 문제의 해결책을 공유하며, 새로운 기술을 탐구하는
+				공간입니다. Kubernetes 네트워킹에 대한 심층 분석이든 프로덕션 이슈 디버깅 팁이든, 유용한
+				내용을 찾으실 수 있기를 바랍니다.
+			</p>
+
+			<h3>연락처</h3>
+			<p>
+				<a href="https://github.com/sunhongmin225">GitHub</a> 또는{' '}
+				<a href="https://www.linkedin.com/in/sunhongmin">LinkedIn</a>에서 편하게 연락 주세요. 기술
+				이야기, 프로젝트 협업, 또는 업계 관련 대화를 언제나 환영합니다.
+			</p>
+		</Layout>
+	)
+}
