@@ -8,9 +8,9 @@ import Header from '../components/Header.astro';
 import type { Lang } from '../i18n/ui';
 import { useTranslations } from '../i18n/utils';
 
-type Props = Omit<CollectionEntry<'blog'>['data'], 'pubDate'> & { pubDate?: Date; lang?: Lang };
+type Props = Omit<CollectionEntry<'blog'>['data'], 'pubDate'> & { pubDate?: Date; lang?: Lang; hideTitle?: boolean };
 
-const { title, description, pubDate, updatedDate, heroImage, lang = 'en' } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, lang = 'en', hideTitle = false } = Astro.props;
 const t = useTranslations(lang);
 ---
 
@@ -69,22 +69,24 @@ const t = useTranslations(lang);
 					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
 				</div>
 				<div class="prose">
-					<div class="title">
-						{pubDate && (
-							<div class="date">
-								<FormattedDate date={pubDate} lang={lang} />
-								{
-									updatedDate && (
-										<div class="last-updated-on">
-											{t('blog.lastUpdated')} <FormattedDate date={updatedDate} lang={lang} />
-										</div>
-									)
-								}
-							</div>
-						)}
-						<h1>{title}</h1>
-						<hr />
-					</div>
+					{!hideTitle && (
+						<div class="title">
+							{pubDate && (
+								<div class="date">
+									<FormattedDate date={pubDate} lang={lang} />
+									{
+										updatedDate && (
+											<div class="last-updated-on">
+												{t('blog.lastUpdated')} <FormattedDate date={updatedDate} lang={lang} />
+											</div>
+										)
+									}
+								</div>
+							)}
+							<h1>{title}</h1>
+							<hr />
+						</div>
+					)}
 					<slot />
 				</div>
 			</article>
