@@ -8,6 +8,14 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	site: 'https://sunhongmin225.github.io',
 	integrations: [mdx(), sitemap()],
+	markdown: {
+		shikiConfig: {
+			themes: {
+				light: 'github-light',
+				dark: 'github-dark',
+			},
+		},
+	},
 	i18n: {
 		locales: ['en', 'ko'],
 		defaultLocale: 'en',

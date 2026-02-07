@@ -24,6 +24,13 @@ const currentPath = Astro.url.pathname;
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<script is:inline>
+	(function(){
+		var s = localStorage.getItem('preferred-theme') || 'system';
+		var d = s === 'system' ? matchMedia('(prefers-color-scheme: dark)').matches : s === 'dark';
+		if (d) document.documentElement.setAttribute('data-theme', 'dark');
+	})();
+</script>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link
