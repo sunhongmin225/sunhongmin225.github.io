@@ -2,7 +2,7 @@
 title: "AWS SaaS Architecture Patterns Implementation on Amazon EKS: Blux, a Korean Startup"
 description: "How Blux implemented AWS SaaS architecture patterns on Amazon EKS to build a scalable, multi-tenant personalized recommendation solution."
 pubDate: 2023-11-21
-heroImage: ../../../assets/aws-saas-eks-hero.png
+heroImage: ../../../assets/aws-saas-eks-en-2.png
 ---
 
 > **Originally published** on the [AWS Partner Network (APN) Blog](https://aws.amazon.com/blogs/apn/aws-saas-architecture-patterns-implementation-on-amazon-eks-blux-a-korean-startup/). Republished here on the author's personal blog. This post was co-authored by Jinah Kim (AWS), Hoseong Seo (AWS), and SunHong Min (blux).

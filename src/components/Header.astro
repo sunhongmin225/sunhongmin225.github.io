@@ -83,6 +83,15 @@ const t = useTranslations(lang);
 		gap: 0.25em;
 	}
 	@media (max-width: 720px) {
+		nav {
+			flex-wrap: wrap;
+		}
+		.internal-links {
+			order: 3;
+			width: 100%;
+			display: flex;
+			justify-content: center;
+		}
 		.social-links a:not(.lang-toggle) {
 			display: none;
 		}
