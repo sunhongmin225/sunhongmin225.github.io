@@ -2,11 +2,10 @@
 title: "GitHub Public Repository에 올려도 되는 안전한 Kubernetes Secrets, 'Sealed Secrets'"
 description: "Kubernetes Secrets의 Base64 인코딩 취약점과 이를 해결하는 Bitnami의 SealedSecrets 사용법, 그리고 Kubeseal Scope 옵션 활용법을 다룹니다."
 pubDate: 2024-01-16
-updatedDate: 2024-09-30
 heroImage: ../../../assets/sealed-secrets-hero.png
 ---
 
-> **원문:** 이 글은 [Blux 기술 블로그](https://blog.blux.ai/sealed-secrets-github-public-repository%EC%97%90-%EC%98%AC%EB%A0%A4%EB%8F%84-%EB%90%98%EB%8A%94-%EC%95%88%EC%A0%84%ED%95%9C-kubernetes-secrets-17393)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.
+> **원문:** 이 글은 [blux 기술 블로그](https://blog.blux.ai/sealed-secrets-github-public-repository%EC%97%90-%EC%98%AC%EB%A0%A4%EB%8F%84-%EB%90%98%EB%8A%94-%EC%95%88%EC%A0%84%ED%95%9C-kubernetes-secrets-17393)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.
 
 ## Kubernetes Secrets 및 이와 연관된 보안상의 문제
 
