@@ -8,4 +8,12 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	site: 'https://sunhongmin225.github.io',
 	integrations: [mdx(), sitemap()],
+	i18n: {
+		locales: ['en', 'ko'],
+		defaultLocale: 'en',
+		routing: {
+			prefixDefaultLocale: true,
+			redirectToDefaultLocale: false,
+		},
+	},
 });

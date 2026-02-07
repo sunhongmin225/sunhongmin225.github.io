@@ -1,0 +1,135 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { languages, type Lang } from '../../i18n/ui';
+import { getLangFromId, getSlugFromId, useTranslations } from '../../i18n/utils';
+
+export function getStaticPaths() {
+	return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+const posts = (await getCollection('blog'))
+	.filter((post) => getLangFromId(post.id) === lang)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 4);
+---
+
+<!doctype html>
+<html lang={lang}>
+	<head>
+		<BaseHead title={t('site.title')} description={t('site.description')} lang={lang} />
+		<style>
+			.intro {
+				margin-bottom: 2rem;
+				padding-bottom: 2rem;
+				border-bottom: 1px solid rgb(var(--gray-light));
+			}
+			.intro h1 {
+				margin-bottom: 0.5rem;
+			}
+			.intro p {
+				color: rgb(var(--gray));
+				margin: 0;
+			}
+			.section-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 1.5rem;
+			}
+			.section-header h2 {
+				margin: 0;
+			}
+			.section-header a {
+				font-size: 0.9rem;
+			}
+			ul {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 2rem;
+				list-style-type: none;
+				margin: 0;
+				padding: 0;
+			}
+			ul li {
+				width: calc(50% - 1rem);
+			}
+			ul li * {
+				text-decoration: none;
+				transition: 0.2s ease;
+			}
+			ul li img {
+				margin-bottom: 0.5rem;
+				border-radius: 12px;
+			}
+			ul li a {
+				display: block;
+			}
+			.title {
+				margin: 0;
+				color: rgb(var(--black));
+				line-height: 1.2;
+			}
+			.date {
+				margin: 0;
+				color: rgb(var(--gray));
+				font-size: 0.9rem;
+			}
+			ul li a:hover .title,
+			ul li a:hover .date {
+				color: var(--accent);
+			}
+			ul li a:hover img {
+				box-shadow: var(--box-shadow);
+			}
+			@media (max-width: 720px) {
+				ul {
+					gap: 1.5em;
+				}
+				ul li {
+					width: 100%;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header lang={lang} />
+		<main>
+			<section class="intro">
+				<h1>{t('home.welcome')}</h1>
+				<p>{t('home.intro')}</p>
+			</section>
+			<section>
+				<div class="section-header">
+					<h2>{t('home.recentPosts')}</h2>
+					<a href={`/${lang}/blog`}>{t('home.viewAll')} &rarr;</a>
+				</div>
+				<ul>
+					{
+						posts.map((post) => (
+							<li>
+								<a href={`/${lang}/blog/${getSlugFromId(post.id)}/`}>
+									{post.data.heroImage && (
+										<Image width={720} height={360} src={post.data.heroImage} alt="" />
+									)}
+									<h4 class="title">{post.data.title}</h4>
+									<p class="date">
+										<FormattedDate date={post.data.pubDate} lang={lang} />
+									</p>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+		</main>
+		<Footer lang={lang} />
+	</body>
+</html>

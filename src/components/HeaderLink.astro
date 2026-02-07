@@ -4,9 +4,14 @@ import type { HTMLAttributes } from 'astro/types';
 type Props = HTMLAttributes<'a'>;
 
 const { href, class: className, ...props } = Astro.props;
-const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
-const subpath = pathname.match(/[^\/]+/g);
-const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+const pathname = Astro.url.pathname.replace(/\/$/, '');
+const hrefNormalized = (href as string).replace(/\/$/, '');
+// For lang root links like /en, only match exactly; for section links, use startsWith
+const segments = hrefNormalized.split('/').filter(Boolean);
+const isLangRoot = segments.length === 1;
+const isActive = isLangRoot
+	? pathname === hrefNormalized
+	: pathname === hrefNormalized || pathname.startsWith(hrefNormalized + '/');
 ---
 
 <a href={href} class:list={[className, { active: isActive }]} {...props}>
