@@ -24,11 +24,14 @@ const t = useTranslations(lang);
 				margin: 0;
 			}
 			.hero-image {
-				width: 100%;
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: 0 auto;
 			}
 			.hero-image img {
 				display: block;
-				margin: 0 auto;
+				width: 100%;
+				height: auto;
 				border-radius: 12px;
 				box-shadow: var(--box-shadow);
 			}
