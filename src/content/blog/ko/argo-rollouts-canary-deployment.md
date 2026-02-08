@@ -4,6 +4,7 @@ description: "99.9% 가용성을 지키기 위해 Argo Rollouts와 Datadog 연�
 pubDate: 2025-12-17
 heroImage: ../../../assets/argo-rollouts-canary-deployment-hero.png
 heroImageCaption: "배포가 두렵지 않은 팀 만들기: Argo Rollouts로 카나리 배포 자동화하기 (Google Gemini 3 Pro를 이용하여 직접 생성)"
+tags: ["Kubernetes", "DevOps"]
 ---
 
 > **원문:** 이 글은 [DelightRoom 기술 블로그](https://medium.com/delightroom/%EB%B0%B0%ED%8F%AC%EA%B0%80-%EB%91%90%EB%A0%B5%EC%A7%80-%EC%95%8A%EC%9D%80-%ED%8C%80-%EB%A7%8C%EB%93%A4%EA%B8%B0-argo-rollouts%EB%A1%9C-%EC%B9%B4%EB%82%98%EB%A6%AC-%EB%B0%B0%ED%8F%AC-%EC%9E%90%EB%8F%99%ED%99%94%ED%95%98%EA%B8%B0-c60a23a46da3)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.

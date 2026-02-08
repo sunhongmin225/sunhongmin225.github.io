@@ -1,8 +1,7 @@
 /*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
+  GitHub Blog-inspired design system.
+  Evolved from Bear Blog starter template.
+*/
 
 :root {
 	color-scheme: light;
@@ -12,12 +11,29 @@
 	--gray: 96, 115, 159;
 	--gray-light: 229, 233, 240;
 	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
 	--bg: #fff;
 	--surface: #fff;
 	--box-shadow:
 		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
 		rgba(var(--gray), 33%);
+
+	/* Card tokens */
+	--card-bg: #fff;
+	--card-border: rgb(var(--gray-light));
+	--card-radius: 12px;
+	--card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+	--card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+	/* Layout widths */
+	--content-width: 768px;
+	--listing-width: 1100px;
+
+	/* Transitions */
+	--transition-fast: 150ms ease;
+	--transition-normal: 250ms ease;
+
+	/* Divider */
+	--divider: rgb(var(--gray-light));
 }
 [data-theme="dark"] {
 	color-scheme: dark;
@@ -25,14 +41,23 @@
 	--accent-dark: #06b6d4;
 	--black: 240, 240, 245;
 	--gray: 160, 170, 195;
-	--gray-light: 40, 45, 55;
+	--gray-light: 48, 54, 68;
 	--gray-dark: 220, 225, 235;
-	--gray-gradient: rgba(var(--gray-light), 50%), #1a1d27;
-	--bg: #1a1d27;
-	--surface: #22252f;
+	--bg: #0d1117;
+	--surface: #161b22;
 	--box-shadow:
 		0 2px 6px rgba(0, 0, 0, 25%), 0 8px 24px rgba(0, 0, 0, 33%), 0 16px 32px
 		rgba(0, 0, 0, 33%);
+
+	/* Card tokens (dark) */
+	--card-bg: #161b22;
+	--card-border: rgba(240, 246, 252, 0.1);
+	--card-radius: 12px;
+	--card-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+	--card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+	/* Divider (dark) */
+	--divider: rgba(240, 246, 252, 0.1);
 }
 @font-face {
 	font-family: "Atkinson";
@@ -54,17 +79,15 @@ body {
 	padding: 0;
 	text-align: left;
 	background-color: var(--bg);
-	background-image: linear-gradient(var(--gray-gradient));
-	background-repeat: no-repeat;
-	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	color: rgb(var(--gray-dark));
 	font-size: 20px;
 	line-height: 1.7;
+	transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 main {
-	width: 768px;
+	width: var(--content-width);
 	max-width: calc(100% - 2em);
 	margin: auto;
 	padding: 3em 1em;
@@ -78,6 +101,8 @@ h6 {
 	margin: 0 0 0.5rem 0;
 	color: rgb(var(--black));
 	line-height: 1.25;
+	font-weight: 700;
+	letter-spacing: -0.01em;
 }
 h1 {
 	font-size: 2.25em;
@@ -108,9 +133,10 @@ b {
 }
 a {
 	color: var(--accent);
+	transition: color var(--transition-fast);
 }
 a:hover {
-	color: var(--accent);
+	color: var(--accent-dark);
 }
 p {
 	margin-bottom: 1em;
@@ -161,7 +187,7 @@ blockquote {
 }
 hr {
 	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
+	border-top: 1px solid var(--divider);
 }
 @media (max-width: 768px) {
 	body {

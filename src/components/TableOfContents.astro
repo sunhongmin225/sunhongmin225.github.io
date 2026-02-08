@@ -1,0 +1,116 @@
+---
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Heading {
+	depth: number;
+	slug: string;
+	text: string;
+}
+
+interface Props {
+	headings: Heading[];
+	lang: Lang;
+}
+
+const { headings, lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Only include h2 and h3
+const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{filteredHeadings.length > 0 && (
+	<nav class="toc" aria-label={t('blog.tableOfContents')}>
+		<h4 class="toc-title">{t('blog.tableOfContents')}</h4>
+		<ul class="toc-list">
+			{filteredHeadings.map((heading) => (
+				<li class:list={[`toc-item`, `depth-${heading.depth}`]}>
+					<a href={`#${heading.slug}`} class="toc-link" data-slug={heading.slug}>
+						{heading.text}
+					</a>
+				</li>
+			))}
+		</ul>
+	</nav>
+)}
+
+<script is:inline>
+(function () {
+	const tocLinks = document.querySelectorAll('.toc-link');
+	if (!tocLinks.length) return;
+
+	const headingEls = [];
+	tocLinks.forEach(function (link) {
+		var slug = link.getAttribute('data-slug');
+		var el = document.getElementById(slug);
+		if (el) headingEls.push({ el: el, link: link });
+	});
+
+	if (!headingEls.length) return;
+
+	var observer = new IntersectionObserver(
+		function (entries) {
+			entries.forEach(function (entry) {
+				if (entry.isIntersecting) {
+					tocLinks.forEach(function (l) { l.classList.remove('active'); });
+					headingEls.forEach(function (h) {
+						if (h.el === entry.target) {
+							h.link.classList.add('active');
+						}
+					});
+				}
+			});
+		},
+		{ rootMargin: '0px 0px -70% 0px', threshold: 0.1 }
+	);
+
+	headingEls.forEach(function (h) { observer.observe(h.el); });
+})();
+</script>
+
+<style>
+	.toc {
+		position: sticky;
+		top: 2rem;
+		max-height: calc(100vh - 4rem);
+		overflow-y: auto;
+	}
+	.toc-title {
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: rgb(var(--gray));
+		margin: 0 0 0.75rem 0;
+	}
+	.toc-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.toc-item {
+		margin: 0;
+	}
+	.toc-item.depth-3 {
+		padding-left: 1rem;
+	}
+	.toc-link {
+		display: block;
+		padding: 0.3rem 0 0.3rem 0.75rem;
+		font-size: 0.85rem;
+		color: rgb(var(--gray));
+		text-decoration: none;
+		border-left: 2px solid transparent;
+		transition: color var(--transition-fast), border-color var(--transition-fast);
+		line-height: 1.4;
+	}
+	.toc-link:hover {
+		color: rgb(var(--black));
+	}
+	.toc-link:global(.active) {
+		color: var(--accent);
+		border-left-color: var(--accent);
+		font-weight: 600;
+	}
+</style>

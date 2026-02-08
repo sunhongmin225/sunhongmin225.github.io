@@ -4,6 +4,7 @@ description: "AWS Kinesis Data Streams와 Amazon Data Firehose를 이용한 실�
 pubDate: 2024-03-22
 heroImage: ../../../assets/kinesis-streaming-data-to-s3-hero.png
 heroImageCaption: "썸네일 이미지"
+tags: ["AWS", "Data Engineering"]
 ---
 
 > **원문:** 이 글은 [blux 기술 블로그](https://blog.blux.ai/kinesis-%EC%8A%A4%ED%8A%B8%EB%A6%AC%EB%B0%8D-%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%B2%98%EB%A6%AC-%EC%95%84%ED%82%A4%ED%85%8D%EC%B3%90-0522)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.

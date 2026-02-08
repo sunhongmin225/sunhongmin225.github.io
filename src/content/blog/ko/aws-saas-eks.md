@@ -4,6 +4,7 @@ description: "Blux가 AWS SaaS 아키텍처 패턴을 적용하여 Amazon EKS �
 pubDate: 2023-11-21
 heroImage: ../../../assets/aws-saas-eks-en-2.png
 heroImageCaption: "썸네일 이미지"
+tags: ["AWS", "Kubernetes"]
 ---
 
 > **원문:** 이 글은 [AWS 기술 블로그](https://aws.amazon.com/ko/blogs/tech/blux-adopting-aws-saas-architecture/)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다. 이 글은 김진아(AWS), 서호성(AWS), 민선홍(blux) 세 명이 공동으로 작성하였습니다.

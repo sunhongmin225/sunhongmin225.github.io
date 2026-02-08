@@ -4,6 +4,7 @@ description: "A step-by-step guide to upgrading your EKS cluster version without
 pubDate: 2024-08-12
 heroImage: ../../../assets/eks-cluster-upgrade-hero.jpg
 heroImageCaption: "Thumbnail image"
+tags: ["AWS", "Kubernetes"]
 ---
 
 > **Originally published** on the [blux Tech Blog](https://blog.blux.ai/%EB%AC%B4%EC%A4%91%EB%8B%A8%EC%9C%BC%EB%A1%9C-eks-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0-%EB%B2%84%EC%A0%84-%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%93%9C%ED%95%98%EA%B8%B0-25859). Republished here on the author's personal blog.

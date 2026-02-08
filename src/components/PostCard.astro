@@ -1,0 +1,228 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import FormattedDate from './FormattedDate.astro';
+import TagBadge from './TagBadge.astro';
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+	title: string;
+	description: string;
+	pubDate: Date;
+	heroImage?: ImageMetadata;
+	slug: string;
+	lang: Lang;
+	tags?: string[];
+	readingTime?: number;
+	variant?: 'featured' | 'standard' | 'compact';
+}
+
+const {
+	title,
+	description,
+	pubDate,
+	heroImage,
+	slug,
+	lang,
+	tags = [],
+	readingTime,
+	variant = 'standard',
+} = Astro.props;
+
+const t = useTranslations(lang);
+const href = `/${lang}/blog/${slug}/`;
+---
+
+{variant === 'featured' && (
+	<article class="post-card featured">
+		<a href={href} class="card-link">
+			{heroImage && (
+				<div class="card-image">
+					<Image src={heroImage} alt="" width={1100} height={550} />
+				</div>
+			)}
+			<div class="card-content">
+				{tags.length > 0 && (
+					<div class="card-tags">
+						{tags.map((tag) => <TagBadge tag={tag} />)}
+					</div>
+				)}
+				<h2 class="card-title">{title}</h2>
+				<p class="card-description">{description}</p>
+				<div class="card-meta">
+					<FormattedDate date={pubDate} lang={lang} />
+					{readingTime && <span class="reading-time">&middot; {readingTime} {t('post.minRead')}</span>}
+				</div>
+			</div>
+		</a>
+	</article>
+)}
+
+{variant === 'standard' && (
+	<article class="post-card standard">
+		<a href={href} class="card-link">
+			{heroImage && (
+				<div class="card-image">
+					<Image src={heroImage} alt="" width={720} height={360} />
+				</div>
+			)}
+			<div class="card-content">
+				{tags.length > 0 && (
+					<div class="card-tags">
+						{tags.map((tag) => <TagBadge tag={tag} />)}
+					</div>
+				)}
+				<h3 class="card-title">{title}</h3>
+				<p class="card-description">{description}</p>
+				<div class="card-meta">
+					<FormattedDate date={pubDate} lang={lang} />
+					{readingTime && <span class="reading-time">&middot; {readingTime} {t('post.minRead')}</span>}
+				</div>
+			</div>
+		</a>
+	</article>
+)}
+
+{variant === 'compact' && (
+	<article class="post-card compact">
+		<a href={href} class="card-link">
+			{heroImage && (
+				<div class="card-image">
+					<Image src={heroImage} alt="" width={240} height={160} />
+				</div>
+			)}
+			<div class="card-content">
+				{tags.length > 0 && (
+					<div class="card-tags">
+						{tags.map((tag) => <TagBadge tag={tag} />)}
+					</div>
+				)}
+				<h3 class="card-title">{title}</h3>
+				<div class="card-meta">
+					<FormattedDate date={pubDate} lang={lang} />
+					{readingTime && <span class="reading-time">&middot; {readingTime} {t('post.minRead')}</span>}
+				</div>
+			</div>
+		</a>
+	</article>
+)}
+
+<style>
+	.post-card {
+		background: var(--card-bg);
+		border: 1px solid var(--card-border);
+		border-radius: var(--card-radius);
+		overflow: hidden;
+		box-shadow: var(--card-shadow);
+		transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+	}
+	.post-card:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--card-shadow-hover);
+	}
+	.card-link {
+		display: block;
+		text-decoration: none;
+		color: inherit;
+	}
+	.card-image {
+		overflow: hidden;
+	}
+	.card-image img {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 0;
+		transition: transform var(--transition-normal);
+	}
+	.post-card:hover .card-image img {
+		transform: scale(1.03);
+	}
+	.card-content {
+		padding: 1.25rem;
+	}
+	.card-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-bottom: 0.75rem;
+	}
+	.card-meta {
+		font-size: 0.85rem;
+		color: rgb(var(--gray));
+	}
+	.reading-time {
+		margin-left: 0.25rem;
+	}
+
+	/* Featured variant */
+	.featured .card-title {
+		font-size: 1.75rem;
+		margin: 0 0 0.5rem 0;
+		color: rgb(var(--black));
+		line-height: 1.3;
+	}
+	.featured .card-description {
+		font-size: 1.05rem;
+		color: rgb(var(--gray));
+		margin: 0 0 1rem 0;
+		line-height: 1.6;
+	}
+
+	/* Standard variant */
+	.standard .card-title {
+		font-size: 1.15rem;
+		margin: 0 0 0.4rem 0;
+		color: rgb(var(--black));
+		line-height: 1.35;
+	}
+	.standard .card-description {
+		font-size: 0.9rem;
+		color: rgb(var(--gray));
+		margin: 0 0 0.75rem 0;
+		line-height: 1.5;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	/* Compact variant */
+	.compact .card-link {
+		display: flex;
+		gap: 1rem;
+	}
+	.compact .card-image {
+		flex-shrink: 0;
+		width: 160px;
+	}
+	.compact .card-image img {
+		height: 100%;
+		object-fit: cover;
+	}
+	.compact .card-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 1rem;
+	}
+	.compact .card-title {
+		font-size: 1rem;
+		margin: 0 0 0.3rem 0;
+		color: rgb(var(--black));
+		line-height: 1.35;
+	}
+
+	@media (max-width: 768px) {
+		.featured .card-title {
+			font-size: 1.35rem;
+		}
+		.compact .card-link {
+			flex-direction: column;
+		}
+		.compact .card-image {
+			width: 100%;
+		}
+	}
+</style>

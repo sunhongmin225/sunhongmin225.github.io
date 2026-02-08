@@ -4,6 +4,7 @@ description: "SOC 2 준비, 어디서부터 어떻게 시작해야 할지 막막
 pubDate: 2025-03-31
 heroImage: ../../../assets/soc2-security-journey-hero.png
 heroImageCaption: "썸네일 이미지"
+tags: ["Security", "DevOps"]
 ---
 
 > **원문:** 이 글은 [blux 기술 블로그](https://blog.blux.ai/%EB%B8%94%EB%9F%AD%EC%8A%A4%EC%9D%98-soc-2-%EB%B3%B4%EC%95%88-%EC%97%AC%EC%A0%95%EA%B3%BC-%EC%9A%B0%EB%A6%AC%EA%B0%80-%EB%82%A8%EA%B8%B4-%EA%B8%B0%EB%A1%9D-49217)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.

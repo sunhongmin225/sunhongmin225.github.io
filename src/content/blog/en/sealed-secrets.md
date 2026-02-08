@@ -4,6 +4,7 @@ description: "Learn how Bitnami's SealedSecrets solves the Base64 encoding vulne
 pubDate: 2024-01-16
 heroImage: ../../../assets/sealed-secrets-hero.png
 heroImageCaption: "Thumbnail image"
+tags: ["Kubernetes", "Security"]
 ---
 
 > **Originally published** on the [blux Tech Blog](https://blog.blux.ai/sealed-secrets-github-public-repository%EC%97%90-%EC%98%AC%EB%A0%A4%EB%8F%84-%EB%90%98%EB%8A%94-%EC%95%88%EC%A0%84%ED%95%9C-kubernetes-secrets-17393). Republished here on the author's personal blog.

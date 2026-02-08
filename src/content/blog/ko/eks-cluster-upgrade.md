@@ -4,6 +4,7 @@ description: "Blue-Green 배포 방식을 활용하여 서비스 중단 없이 E
 pubDate: 2024-08-12
 heroImage: ../../../assets/eks-cluster-upgrade-hero.jpg
 heroImageCaption: "썸네일 이미지"
+tags: ["AWS", "Kubernetes"]
 ---
 
 > **원문:** 이 글은 [blux 기술 블로그](https://blog.blux.ai/%EB%AC%B4%EC%A4%91%EB%8B%A8%EC%9C%BC%EB%A1%9C-eks-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0-%EB%B2%84%EC%A0%84-%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%93%9C%ED%95%98%EA%B8%B0-25859)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.

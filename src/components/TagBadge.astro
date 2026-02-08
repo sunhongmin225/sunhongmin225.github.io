@@ -1,0 +1,45 @@
+---
+interface Props {
+	tag: string;
+}
+
+const { tag } = Astro.props;
+
+const tagColors: Record<string, { bg: string; text: string; darkBg: string; darkText: string }> = {
+	Kubernetes: { bg: '#dbeafe', text: '#1e40af', darkBg: 'rgba(59,130,246,0.15)', darkText: '#60a5fa' },
+	AWS: { bg: '#ffedd5', text: '#c2410c', darkBg: 'rgba(251,146,60,0.15)', darkText: '#fb923c' },
+	Security: { bg: '#fee2e2', text: '#b91c1c', darkBg: 'rgba(248,113,113,0.15)', darkText: '#f87171' },
+	DevOps: { bg: '#e0e7ff', text: '#3730a3', darkBg: 'rgba(129,140,248,0.15)', darkText: '#818cf8' },
+	GitOps: { bg: '#dcfce7', text: '#166534', darkBg: 'rgba(74,222,128,0.15)', darkText: '#4ade80' },
+	'Data Engineering': { bg: '#fce7f3', text: '#9d174d', darkBg: 'rgba(244,114,182,0.15)', darkText: '#f472b6' },
+};
+
+const colors = tagColors[tag] || { bg: '#f3f4f6', text: '#374151', darkBg: 'rgba(156,163,175,0.15)', darkText: '#9ca3af' };
+---
+
+<span
+	class="tag-badge"
+	style={`--tag-bg: ${colors.bg}; --tag-text: ${colors.text}; --tag-dark-bg: ${colors.darkBg}; --tag-dark-text: ${colors.darkText};`}
+>
+	{tag}
+</span>
+
+<style>
+	.tag-badge {
+		display: inline-block;
+		padding: 0.15em 0.6em;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.025em;
+		border-radius: 9999px;
+		background: var(--tag-bg);
+		color: var(--tag-text);
+		line-height: 1.5;
+		white-space: nowrap;
+	}
+	:global([data-theme="dark"]) .tag-badge {
+		background: var(--tag-dark-bg);
+		color: var(--tag-dark-text);
+	}
+</style>

@@ -2,16 +2,59 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
+import ShareButtons from '../components/ShareButtons.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import TagBadge from '../components/TagBadge.astro';
 import type { Lang } from '../i18n/ui';
 import { useTranslations } from '../i18n/utils';
 
-type Props = Omit<CollectionEntry<'blog'>['data'], 'pubDate'> & { pubDate?: Date; lang?: Lang; hideTitle?: boolean };
+interface Heading {
+	depth: number;
+	slug: string;
+	text: string;
+}
 
-const { title, description, pubDate, updatedDate, heroImage, heroImageCaption, lang = 'en', hideTitle = false } = Astro.props;
+type Props = Omit<CollectionEntry<'blog'>['data'], 'pubDate'> & {
+	pubDate?: Date;
+	lang?: Lang;
+	hideTitle?: boolean;
+	headings?: Heading[];
+	readingTime?: number;
+	allPosts?: CollectionEntry<'blog'>[];
+	currentSlug?: string;
+	showToC?: boolean;
+	showRelatedPosts?: boolean;
+	showBreadcrumb?: boolean;
+};
+
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	heroImage,
+	heroImageCaption,
+	tags = [],
+	lang = 'en',
+	hideTitle = false,
+	headings = [],
+	readingTime,
+	allPosts = [],
+	currentSlug = '',
+	showToC = false,
+	showRelatedPosts = false,
+	showBreadcrumb = false,
+} = Astro.props;
+
 const t = useTranslations(lang);
+const pageUrl = Astro.url.href;
+const hasToC = showToC && headings.length > 0;
+const showRelated = showRelatedPosts && allPosts.length > 0 && currentSlug;
 ---
 
 <html lang={lang}>
@@ -21,12 +64,52 @@ const t = useTranslations(lang);
 			main {
 				width: calc(100% - 2em);
 				max-width: 100%;
-				margin: 0;
+				margin: 0 auto;
+				padding: 2em 1em 0;
+			}
+			.post-hero {
+				max-width: var(--content-width);
+				margin: 0 auto 1.5rem;
+			}
+			.post-tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.4rem;
+				margin-bottom: 1rem;
+			}
+			.post-hero h1 {
+				font-size: 2.25em;
+				line-height: 1.2;
+				margin: 0 0 0.75rem 0;
+			}
+			.post-description {
+				font-size: 1.15rem;
+				color: rgb(var(--gray));
+				margin: 0 0 1.25rem 0;
+				line-height: 1.6;
+			}
+			.post-meta {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 0.75rem;
+				font-size: 0.9rem;
+				color: rgb(var(--gray));
+				padding-bottom: 1.5rem;
+				border-bottom: 1px solid var(--divider);
+			}
+			.meta-separator {
+				color: var(--divider);
+			}
+			.reading-time {
+				color: rgb(var(--gray));
+			}
+			.last-updated-on {
+				font-style: italic;
 			}
 			.hero-image {
-				width: 768px;
-				max-width: calc(100% - 2em);
-				margin: 0 auto;
+				max-width: var(--content-width);
+				margin: 0 auto 2rem;
 			}
 			.hero-image img {
 				display: block;
@@ -41,28 +124,52 @@ const t = useTranslations(lang);
 				color: rgb(var(--gray));
 				margin-top: 0.5em;
 			}
+			.post-content-wrapper {
+				max-width: calc(var(--content-width) + 280px);
+				margin: 0 auto;
+				display: grid;
+				grid-template-columns: minmax(0, var(--content-width)) 250px;
+				gap: 2rem;
+			}
+			.post-content-wrapper.no-toc {
+				grid-template-columns: minmax(0, var(--content-width));
+				max-width: var(--content-width);
+			}
 			.prose {
-				width: 768px;
-				max-width: calc(100% - 2em);
+				color: rgb(var(--gray-dark));
+				min-width: 0;
+			}
+			.toc-sidebar {
+				padding-top: 0.5rem;
+			}
+			.related-section {
+				max-width: var(--listing-width);
+				margin: 0 auto;
+				padding: 0 1em 3em;
+			}
+			.about-prose {
+				max-width: var(--content-width);
 				margin: auto;
 				padding: 1em;
 				color: rgb(var(--gray-dark));
 			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
+			.breadcrumb-wrapper {
+				max-width: var(--content-width);
+				margin: 0 auto;
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
+			@media (max-width: 1080px) {
+				.post-content-wrapper {
+					grid-template-columns: minmax(0, 1fr);
+					max-width: var(--content-width);
+				}
+				.toc-sidebar {
+					display: none;
+				}
 			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
+			@media (max-width: 768px) {
+				.post-hero h1 {
+					font-size: 1.75em;
+				}
 			}
 		</style>
 	</head>
@@ -70,33 +177,75 @@ const t = useTranslations(lang);
 	<body>
 		<Header lang={lang} />
 		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-					{heroImageCaption && <p class="hero-image-caption">{heroImageCaption}</p>}
-				</div>
-				<div class="prose">
-					{!hideTitle && (
-						<div class="title">
-							{pubDate && (
-								<div class="date">
-									<FormattedDate date={pubDate} lang={lang} />
-									{
-										updatedDate && (
-											<div class="last-updated-on">
-												{t('blog.lastUpdated')} <FormattedDate date={updatedDate} lang={lang} />
-											</div>
-										)
-									}
+			{hideTitle ? (
+				<article>
+					<div class="about-prose">
+						<slot />
+					</div>
+				</article>
+			) : (
+				<div>
+					<article>
+						{showBreadcrumb && (
+							<div class="breadcrumb-wrapper">
+								<Breadcrumb items={[
+									{ label: lang === 'en' ? 'Home' : '홈', href: `/${lang}/` },
+									{ label: lang === 'en' ? 'Blog' : '블로그', href: `/${lang}/blog` },
+									{ label: title },
+								]} />
+							</div>
+						)}
+
+						<div class="post-hero">
+							{tags.length > 0 && (
+								<div class="post-tags">
+									{tags.map((tag: string) => <TagBadge tag={tag} />)}
 								</div>
 							)}
 							<h1>{title}</h1>
-							<hr />
+							<p class="post-description">{description}</p>
+							<div class="post-meta">
+								{pubDate && <FormattedDate date={pubDate} lang={lang} />}
+								{readingTime && <span class="meta-separator">|</span>}
+								{readingTime && <span class="reading-time">{readingTime} {t('post.minRead')}</span>}
+								{updatedDate && <span class="meta-separator">|</span>}
+								{updatedDate && <span class="last-updated-on">{t('blog.lastUpdated')} <FormattedDate date={updatedDate} lang={lang} /></span>}
+								<span class="meta-separator">|</span>
+								<ShareButtons url={pageUrl} title={title} lang={lang} />
+							</div>
+						</div>
+
+						{heroImage && (
+							<div class="hero-image">
+								<Image width={1020} height={510} src={heroImage} alt="" />
+								{heroImageCaption && <p class="hero-image-caption">{heroImageCaption}</p>}
+							</div>
+						)}
+
+						<div class:list={['post-content-wrapper', { 'no-toc': !hasToC }]}>
+							<div class="prose">
+								<slot />
+							</div>
+							{hasToC && (
+								<aside class="toc-sidebar">
+									<TableOfContents headings={headings} lang={lang} />
+								</aside>
+							)}
+						</div>
+					</article>
+
+					{showRelated && (
+						<div class="related-section">
+							<RelatedPosts
+								currentSlug={currentSlug}
+								currentTags={tags}
+								lang={lang}
+								allPosts={allPosts}
+							/>
 						</div>
 					)}
-					<slot />
 				</div>
-			</article>
+			)}
 		</main>
 		<Footer lang={lang} />
 	</body>

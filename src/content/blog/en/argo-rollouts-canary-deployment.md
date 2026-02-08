@@ -4,6 +4,7 @@ description: "How we built an automated canary deployment pipeline with Argo Rol
 pubDate: 2025-12-17
 heroImage: ../../../assets/argo-rollouts-canary-deployment-hero.png
 heroImageCaption: "Building a Fearless Deployment Culture: Automating Canary Deployments with Argo Rollouts (generated using Google Gemini 3 Pro)"
+tags: ["Kubernetes", "DevOps"]
 ---
 
 > **Originally published** on the [DelightRoom Tech Blog](https://medium.com/delightroom/%EB%B0%B0%ED%8F%AC%EA%B0%80-%EB%91%90%EB%A0%B5%EC%A7%80-%EC%95%8A%EC%9D%80-%ED%8C%80-%EB%A7%8C%EB%93%A4%EA%B8%B0-argo-rollouts%EB%A1%9C-%EC%B9%B4%EB%82%98%EB%A6%AC-%EB%B0%B0%ED%8F%AC-%EC%9E%90%EB%8F%99%ED%99%94%ED%95%98%EA%B8%B0-c60a23a46da3). Republished here on the author's personal blog.

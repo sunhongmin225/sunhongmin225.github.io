@@ -1,0 +1,72 @@
+---
+interface BreadcrumbItem {
+	label: string;
+	href?: string;
+}
+
+interface Props {
+	items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+	<ol>
+		{items.map((item, i) => (
+			<li>
+				{i > 0 && <span class="separator" aria-hidden="true">&rsaquo;</span>}
+				{item.href && i < items.length - 1 ? (
+					<a href={item.href}>{item.label}</a>
+				) : (
+					<span class="current">{item.label}</span>
+				)}
+			</li>
+		))}
+	</ol>
+</nav>
+
+<style>
+	.breadcrumb {
+		font-size: 0.875rem;
+		margin-bottom: 1.5rem;
+	}
+	ol {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		gap: 0.25rem;
+	}
+	li {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+	}
+	a {
+		color: rgb(var(--gray));
+		text-decoration: none;
+		transition: color var(--transition-fast);
+	}
+	a:hover {
+		color: var(--accent);
+	}
+	.separator {
+		color: rgb(var(--gray));
+		font-size: 1.1em;
+	}
+	.current {
+		color: rgb(var(--gray-dark));
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 300px;
+	}
+	@media (max-width: 768px) {
+		.current {
+			max-width: 180px;
+		}
+	}
+</style>
