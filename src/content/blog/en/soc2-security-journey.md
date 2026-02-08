@@ -3,6 +3,7 @@ title: "blux's SOC 2 Security Journey and the Record We Left Behind"
 description: "Not sure where to start with SOC 2 preparation? Here are real-world insights from blux's experience that you won't find through a simple search."
 pubDate: 2025-03-31
 heroImage: ../../../assets/soc2-security-journey-hero.png
+heroImageCaption: "Thumbnail image"
 ---
 
 > **Originally published** on the [blux Tech Blog](https://blog.blux.ai/%EB%B8%94%EB%9F%AD%EC%8A%A4%EC%9D%98-soc-2-%EB%B3%B4%EC%95%88-%EC%97%AC%EC%A0%95%EA%B3%BC-%EC%9A%B0%EB%A6%AC%EA%B0%80-%EB%82%A8%EA%B8%B4-%EA%B8%B0%EB%A1%9D-49217). Republished here on the author's personal blog.

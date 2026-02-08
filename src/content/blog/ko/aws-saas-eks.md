@@ -3,6 +3,7 @@ title: "Blux(구 Z.Ai)의 Amazon EKS 기반 AWS SaaS 아키텍처 주요 패턴 
 description: "Blux가 AWS SaaS 아키텍처 패턴을 적용하여 Amazon EKS 환경에서 멀티테넌트 SaaS 솔루션을 성공적으로 고도화한 사례를 공유합니다."
 pubDate: 2023-11-21
 heroImage: ../../../assets/aws-saas-eks-en-2.png
+heroImageCaption: "썸네일 이미지"
 ---
 
 > **원문:** 이 글은 [AWS 기술 블로그](https://aws.amazon.com/ko/blogs/tech/blux-adopting-aws-saas-architecture/)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다. 이 글은 김진아(AWS), 서호성(AWS), 민선홍(blux) 세 명이 공동으로 작성하였습니다.
@@ -12,14 +13,14 @@ Blux는 월 구독 기반 개인화 상품 추천 솔루션을 기업들에게 �
 ## 1. AWS SaaS 아키텍처 패턴 소개
 
 ![SaaS 환경](../../../assets/aws-saas-eks-hero.png)
-*그림 1 – SaaS 환경*
+<center><그림 1: SaaS 환경></center>
 
 SaaS는 최종 사용자에게 애플리케이션을 제공하는 클라우드 기반 소프트웨어 모델입니다. 고객은 SaaS 서비스를 사용하면 서비스의 유지 관리 방식이나 기본 인프라 관리 방식에 대해 고민할 필요가 없습니다. 또한 고객은 모든 기능을 한번에 크게 구매할 필요없이 사용량에 따른 요금제 모델 또는 구독 기반으로 요금을 지불합니다.
 
 SaaS는 모든 고객이 동일한 버전의 애플리케이션을 실행하는 환경에서 제공됩니다. 이러한 이유로 SaaS 환경에서는 단일 공유 프로세스를 통해 모든 테넌트에게 새 기능을 배포할 수 있는 장점을 갖습니다. 또한 모든 테넌트를 관리하고 운영할 수 있는 공통된 운영 환경을 통해 테넌트를 관리하고 모니터링하여, 운영 오버헤드를 늘리지 않고 새 테넌트를 추가할 수 있습니다.
 
 ![SaaS의 Control Plane과 Application Plane](../../../assets/aws-saas-eks-1.png)
-*그림 2 – SaaS의 Control Plane과 Application Plane*
+<center><그림 2: SaaS의 Control Plane과 Application Plane></center>
 
 SaaS 아키텍처는 그림 2와 같이 Control Plane과 Application Plane으로 구성됩니다. Control Plane은 모든 테넌트를 관리하고 운영하는 데 필요한 온보딩, 인증, 관리, 운영 및 분석 서비스를 포함합니다. Application Plane은 SaaS 솔루션의 비즈니스 로직 및 기능 요소가 구현되는 곳입니다.
 
@@ -32,7 +33,7 @@ SaaS Control Plane은 온보딩, 관리 및 운영하는 데 필요한 서비스
 SaaS Application Plane은 SaaS 솔루션의 비즈니스 로직 및 기능을 포함합니다.
 
 ![배포 모델의 예 : Pool 모델과 Silo 모델](../../../assets/aws-saas-eks-2.png)
-*그림 3 – 배포 모델의 예 : Pool 모델과 Silo 모델*
+<center><그림 3: 배포 모델의 예 – Pool 모델과 Silo 모델></center>
 
 - **배포 모델** : Application Plane을 구성하는 컴퓨팅, 스토리지 등의 리소스는 여러 테넌트에 의해 공유되거나 테넌트 별로 전용으로 배포될 수 있습니다. 배포 모델은 티어에 따라 결정될 수도 있습니다. 예를 들어 합리적인 가격을 지불하는 베이직 티어의 테넌트는 공유되는(pool) 리소스를 사용하고, 더 많은 비용을 지불하는 프리미엄 티어의 테넌트는 전용의(silo) 리소스를 사용할 수 있습니다.
 - **테넌트 격리** : 멀티테넌트 환경에서 리소스를 여러 테넌트 간에 공유하더라도 각 테넌트의 리소스는 격리되어야 합니다. 테넌트 격리는 리소스에 대한 액세스를 엄격하게 제어하고 다른 테넌트의 리소스에 액세스하려는 시도를 차단하는 매커니즘을 구현하는 것입니다.
@@ -64,7 +65,7 @@ Blux 서비스는 유저에게 100% 실시간 추천을 제공합니다. 먼저 
 ### 3.1 Amazon EKS 기반 SaaS 아키텍처
 
 ![Blux 아키텍처](../../../assets/aws-saas-eks-3.png)
-*그림 4 – Blux 아키텍처*
+<center><그림 4: Blux 아키텍처></center>
 
 그림 4는 AWS의 SaaS 아키텍처 패턴을 적용하여 고도화한 Blux의 상위 수준의 아키텍처입니다.
 
@@ -83,7 +84,7 @@ Blux의 테넌트들은 Blux에서 제공하는 SDK를 통해 Collector API 또�
 ### 3.2 테넌트 티어
 
 ![Blux의 티어](../../../assets/aws-saas-eks-4.png)
-*그림 5 – Blux의 티어*
+<center><그림 5: Blux의 티어></center>
 
 그림 5는 Blux의 테넌트 티어 별 제공되는 주요 리소스의 공용 혹은 전용 사용 여부를 나타냅니다. 현재 Blux에는 Standard, Premium, Enterprise 총 세 개의 티어가 있고, 이 중 Premium과 Enterprise 테넌트의 경우 테넌트 전용의 자원이 제공됩니다. Standard 테넌트들은 ALB의 API Endpoint를 공유하는 반면, Premium과 Enterprise 테넌트에게는 전용의 ALB API Endpoint가 제공되어 해당 테넌트의 더 많은 사용자 트래픽을 처리할 수 있습니다. 그리고 Enterprise 테넌트는 Premium 테넌트보다 높은 성능의 더 많은 자원을 이용할 수 있습니다.
 
@@ -92,14 +93,14 @@ Blux의 테넌트들은 Blux에서 제공하는 SDK를 통해 Collector API 또�
 ### 3.3 온보딩 자동화
 
 ![Blux의 온보딩](../../../assets/aws-saas-eks-5.png)
-*그림 6 – Blux의 온보딩*
+<center><그림 6: Blux의 온보딩></center>
 
 그림 6은 추천서비스에 새로운 테넌트가 등록될 때 자동으로 처리되는 온보딩 과정을 도식화한 것입니다. 테넌트의 등록 요청이 들어오면 Jenkins를 통해 온보딩 과정을 오케스트레이션 합니다. 먼저 테넌트의 고유 정보를 저장하여 새로운 테넌트를 생성합니다. 이후 빌링을 위해 구독 결제 시작일 등의 정보가 빌링관리 서비스에 의해 처리되고, SaaS 전문 구독 결제 솔루션인 STEP PAY에 결제 수단을 등록합니다. 또한 해당 테넌트만을 위한 자원들이 프로비저닝되는데, Amazon DynamoDB 테이블과 같이 모든 티어의 테넌트에게 동일하게 생성되는 자원도 있는 반면, 전용 노드 그룹과 Karpenter Provisioner과 같이 Premium과 Enterprise 티어의 테넌트에게만 생성되는 자원도 있습니다. Premium 과 Enterprise 티어의 테넌트의 경우 온보딩 과정에서 전용의 Endpoint가 생성되어 별도의 Collector API 및 ML API가 제공됩니다. 마지막으로 Blux의 추천 모델 추론 전용 API인 Recommender API가 ArgoCD를 통해 생성됩니다.
 
 ### 3.4 배포 모델
 
 ![티어 기반의 배포 모델](../../../assets/aws-saas-eks-6.png)
-*그림 7 – 티어 기반의 배포 모델*
+<center><그림 7: 티어 기반의 배포 모델></center>
 
 그림 7은 배포 모델에 따른 티어별 온보딩의 프로비저닝 과정을 나타낸 그림입니다. 3.2 절에서 설명한대로 Blux에는 Standard, Premium, Enterprise 총 세 개의 티어가 있는데, Standard 테넌트들은 Collector와 ML의 API를 공유하게 됩니다. 이에 반해 Premium과 Enterprise 테넌트는 전용의 Endpoint를 가진 Collector 및 ML API를 사용합니다. Premium과 Enterprise 테넌트의 경우, 대규모의 트래픽을 발생시키는 테넌트들이 구독하기 때문에 이와 같이 별도의 자원을 제공하는 것입니다. 다만, Recommender API 경우에는 모든 테넌트에게 전용으로 제공됩니다. 이는 Recommender 워크로드에서 해당 테넌트 전용의 모델을 S3로부터 다운받아 사용하기 위함입니다.
 
@@ -108,7 +109,7 @@ Blux의 테넌트들은 Blux에서 제공하는 SDK를 통해 Collector API 또�
 ### 3.5 테넌트 격리
 
 ![테넌트 격리](../../../assets/aws-saas-eks-7.png)
-*그림 8 – 테넌트 격리*
+<center><그림 8: 테넌트 격리></center>
 
 그림 8은 Blux가 각 테넌트의 자원을 격리하기 위해 [IAM Roles for Service Accounts(IRSA)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)를 활용하고 있는 모습을 도식화 하고 있습니다. Kubernetes에서 Service Account 객체를 통해서 파드의 사용 권한을 관리 할 수 있습니다. 파드에서 AWS 자원에 접근을 하려고 할 때 Service Account에 Annotation으로 자원에 대한 사용 권한을 가진 IAM 역할을 지정해주면, 해당 파드가 그 IAM 역할을 위임(Assume)받아 해당 자원에 대한 정해준 권한에 따라 사용할 수 있게 됩니다.
 

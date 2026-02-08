@@ -3,6 +3,7 @@ title: "Argo CD와 깃옵스를 활용한 블럭스의 쿠버네티스 자원 �
 description: "Argo CD와 GitOps를 활용하여 블럭스가 어떻게 쿠버네티스 자원 관리의 효율성과 안정성을 향상시켰는지 알아보세요."
 pubDate: 2025-02-06
 heroImage: ../../../assets/argocd-gitops-kubernetes-hero.png
+heroImageCaption: "썸네일 이미지"
 ---
 
 > **원문:** 이 글은 [blux 기술 블로그](https://blog.blux.ai/argo-cd%EC%99%80-%EA%B9%83%EC%98%B5%EC%8A%A4%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EB%B8%94%EB%9F%AD%EC%8A%A4%EC%9D%98-%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4-%EC%9E%90%EC%9B%90-%EA%B4%80%EB%A6%AC-%EB%85%B8%ED%95%98%EC%9A%B0-41764)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.

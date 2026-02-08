@@ -3,6 +3,7 @@ title: "Kubernetes 환경에서 HPA와 Karpenter를 이용하여 Autoscaling 시
 description: "쿠버네티스 환경에서 HPA와 Karpenter를 활용하여 트래픽 변동에 자동으로 대응하는 오토스케일링 시스템을 구축하는 방법을 소개합니다."
 pubDate: 2024-01-22
 heroImage: ../../../assets/hpa-karpenter-autoscaling-hero.webp
+heroImageCaption: "썸네일 이미지"
 ---
 
 > **원문:** 이 글은 [blux 기술 블로그](https://blog.blux.ai/kubernetes-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C-hpa%EC%99%80-karpenter%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-autoscaling-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0-17394)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.

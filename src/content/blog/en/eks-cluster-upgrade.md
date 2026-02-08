@@ -3,6 +3,7 @@ title: "Zero-Downtime EKS Cluster Version Upgrade"
 description: "A step-by-step guide to upgrading your EKS cluster version without service interruption using a Blue-Green deployment strategy."
 pubDate: 2024-08-12
 heroImage: ../../../assets/eks-cluster-upgrade-hero.jpg
+heroImageCaption: "Thumbnail image"
 ---
 
 > **Originally published** on the [blux Tech Blog](https://blog.blux.ai/%EB%AC%B4%EC%A4%91%EB%8B%A8%EC%9C%BC%EB%A1%9C-eks-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0-%EB%B2%84%EC%A0%84-%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%93%9C%ED%95%98%EA%B8%B0-25859). Republished here on the author's personal blog.
@@ -55,7 +56,7 @@ This second approach is known as **Blue-Green deployment**. In Blue-Green deploy
 The Green environment doesn't need to be an exact copy of Blue — sometimes internal open-source tools get updated during the process. Of course, thorough testing and validation are required to confirm that all applications work as intended in the Green environment.
 
 <!-- TODO: replace with actual image -->
-*Figure 1: blux EKS Cluster Architecture*
+<center><Figure 1: blux EKS Cluster Architecture></center>
 
 The general advantages of Blue-Green deployment are:
 
@@ -279,7 +280,7 @@ Continuing with the example of serving the `example` application using the Route
 As mentioned multiple times, the application connected to record #1 and its ALB is deployed in the old cluster, while the one connected to record #2 is in the new cluster. Our ultimate goal is to redirect all external traffic from the old cluster's application to the new cluster's application.
 
 <!-- TODO: replace with actual image -->
-*Figure 2: Blue-Green Deployment Strategy*
+<center><Figure 2: Blue-Green Deployment Strategy></center>
 
 When you have two records with different names pointing to applications that do the same thing and want to unify them, Route 53's **Weighted Routing** is the perfect feature. Weighted Routing is a traffic management method provided by Route 53 that lets you distribute traffic across multiple applications by proportion. This enables scenarios like directing more traffic to a specific application or gradually shifting traffic to a new application version.
 

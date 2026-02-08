@@ -10,7 +10,7 @@ import { useTranslations } from '../i18n/utils';
 
 type Props = Omit<CollectionEntry<'blog'>['data'], 'pubDate'> & { pubDate?: Date; lang?: Lang; hideTitle?: boolean };
 
-const { title, description, pubDate, updatedDate, heroImage, lang = 'en', hideTitle = false } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroImageCaption, lang = 'en', hideTitle = false } = Astro.props;
 const t = useTranslations(lang);
 ---
 
@@ -34,6 +34,12 @@ const t = useTranslations(lang);
 				height: auto;
 				border-radius: 12px;
 				box-shadow: var(--box-shadow);
+			}
+			.hero-image-caption {
+				text-align: center;
+				font-size: 0.875em;
+				color: rgb(var(--gray));
+				margin-top: 0.5em;
 			}
 			.prose {
 				width: 720px;
@@ -67,6 +73,7 @@ const t = useTranslations(lang);
 			<article>
 				<div class="hero-image">
 					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
+					{heroImageCaption && <p class="hero-image-caption">{heroImageCaption}</p>}
 				</div>
 				<div class="prose">
 					{!hideTitle && (

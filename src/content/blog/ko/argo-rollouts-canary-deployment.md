@@ -2,12 +2,13 @@
 title: "배포가 두렵지 않은 팀 만들기: Argo Rollouts로 카나리 배포 자동화하기"
 description: "99.9% 가용성을 지키기 위해 Argo Rollouts와 Datadog 연동을 통한 카나리 배포 자동화 파이프라인을 구축한 과정을 공유합니다."
 pubDate: 2025-12-17
-heroImage: ../../../assets/argo-rollouts-canary-deployment-hero.jpeg
+heroImage: ../../../assets/argo-rollouts-canary-deployment-hero.png
+heroImageCaption: "배포가 두렵지 않은 팀 만들기: Argo Rollouts로 카나리 배포 자동화하기 (Google Gemini 3 Pro를 이용하여 직접 생성)"
 ---
 
 > **원문:** 이 글은 [DelightRoom 기술 블로그](https://medium.com/delightroom/%EB%B0%B0%ED%8F%AC%EA%B0%80-%EB%91%90%EB%A0%B5%EC%A7%80-%EC%95%8A%EC%9D%80-%ED%8C%80-%EB%A7%8C%EB%93%A4%EA%B8%B0-argo-rollouts%EB%A1%9C-%EC%B9%B4%EB%82%98%EB%A6%AC-%EB%B0%B0%ED%8F%AC-%EC%9E%90%EB%8F%99%ED%99%94%ED%95%98%EA%B8%B0-c60a23a46da3)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.
 
-### 안녕하세요, 딜라이트룸의 SRE Dan(민선홍)입니다.
+## 안녕하세요, 딜라이트룸의 SRE Dan(민선홍)입니다.
 
 저는 2025년 8월, 딜라이트룸에 SRE(Site Reliability Engineer)로 합류하게 되었습니다. 딜라이트룸은 매일 전 세계 350만 명이 사용하는 알람 앱 [알라미(Alarmy)](https://alar.my/)와, 합산 MAU 4,000만 명을 넘어서는 B2B 광고 수익화 솔루션 [다로(DARO)](https://daro.so/)를 운영하는 스타트업입니다. 이처럼 수많은 유저와 트래픽 환경에서 서비스 안정성을 책임지며 성장할 수 있겠다는 기대감에 합류를 결정했습니다.
 
@@ -15,13 +16,14 @@ SRE는 대규모 서비스의 안정성과 가용성을 소프트웨어 엔지�
 
 오늘은 제가 입사 후 첫 번째로 맡은 업무, '**Argo Rollouts를 통한 카나리 배포 자동화**'를 주제로 글을 작성하고자 합니다. 기존 배포 방식에서 어떤 한계를 느꼈고, 왜 카나리 배포와 Argo Rollouts를 선택했는지, 그리고 실제로 어떻게 구현하고 적용했는지까지 솔직하게 공유하겠습니다. 비슷한 고민을 하고 있는 팀들에게 도움이 되길 바랍니다.
 
-### 왜 배포 파이프라인을 개선해야 했나요?
+## 왜 배포 파이프라인을 개선해야 했나요?
 
 SRE의 모든 업무는 **SLO**(Service Level Objective)라는 목표 아래 계획되고 실행됩니다. SLO는 서비스가 일정 기간 동안 달성해야 하는 성능, 가용성 등의 정량적인 목표이며, **에러 버짓**(Error Budget)은 이 SLO 하에서 허용 가능한 실패의 총량을 의미합니다.
 
 딜라이트룸은 '지난 1개월간 서비스 가용성 99.9% 이상'을 SLO로 설정하고 있습니다. 99.9%라는 수치가 갖는 의미가 무엇일까요? 다음과 같이 수식을 통해 에러 버짓을 계산해보겠습니다.
 
-<!-- TODO: replace with actual image — 수식 1: 에러 버짓 계산 -->
+![에러 버짓 계산](../../../assets/argo-rollouts-canary-deployment-formula1.png)
+<center><수식 1: 한 달간 서비스 가용성 99.9% 이상을 SLO로 설정하고 있을 경우의 에러 버짓></center>
 
 수식을 통해 구해 보면 한 달 기준 0.1%의 허용 실패율은 약 43.2분에 불과합니다. 이 43.2분이 저희 팀의 한 달치 에러 버짓입니다. 다시 말해, **단 5분의 장애가 약 4일치 에러 버짓을 소진**시킵니다. 전 세계 수많은 유저들이 사용하는 서비스에서 이 숫자가 갖는 무게는 상당합니다. 몇 번의 배포 실수가 한 달 운영 안정성 목표 전체를 위협할 수 있기 때문입니다.
 
@@ -45,11 +47,21 @@ SRE의 모든 업무는 **SLO**(Service Level Objective)라는 목표 아래 계
 
 이 목표를 달성하기 위해 선택한 솔루션이 바로 Argo Rollouts와 데이터독 연동을 통한 카나리 배포 자동화였습니다.
 
-### 카나리 배포란?
+## 카나리 배포란?
 
 딜라이트룸은 모든 서버를 쿠버네티스 환경에서 관리하고 있습니다. 쿠버네티스 환경에서 애플리케이션의 새 버전을 배포하는 방식에는 여러 가지가 있으며, 대표적으로 **롤링 업데이트(Rolling Update)**, **블루/그린(Blue/Green)**, **카나리(Canary)** 배포가 있습니다.
 
-<!-- TODO: replace with actual image — 사진 1: 세 가지 배포 방식 비교 -->
+![세 가지 배포 방식 비교](../../../assets/argo-rollouts-canary-deployment-fig1.png)
+<center><사진 1: 쿠버네티스 환경에서 애플리케이션을 배포하는 세 가지 대표적인 방식 (Google Gemini 3 Pro를 이용하여 직접 생성)></center>
+
+| 구분 | 롤링 업데이트 | 블루/그린 | 카나리 |
+|---|---|---|---|
+| 배포 방식 | 기존 버전의 Pod를 새 버전으로 순차 교체 | 새 버전 환경을 별도 구성 후 트래픽을 한 번에 전환 | 새 버전에 소량의 트래픽만 먼저 전환 후 점진적 확대 |
+| 트래픽 전환 | Pod 단위 | 즉시 (0% → 100%) | 비율 단위 (예: 10% → 50% → 100%) |
+| 롤백 속도 | 느림 (Pod 재생성 필요) | 빠름 (트래픽 전환만 수행) | 빠름 (트래픽 전환만 수행) |
+| 리소스 사용량 | 낮음 | 높음 (2배의 인프라 필요) | 중간 |
+| 위험 노출 범위 | 넓음 (배포 중 전체 사용자 영향 가능) | 넓음 (전환 후 전체 사용자 영향) | 좁음 (초기에는 일부 사용자만 영향) |
+<center><표 1: 롤링 업데이트, 블루/그린, 카나리 배포 방식 비교></center>
 
 **롤링 업데이트**는 쿠버네티스의 기본 배포 방식으로 별도의 설정 없이 사용할 수 있다는 장점이 있습니다. 그러나 앞서 설명했듯이 배포 속도가 빠르기 때문에 문제가 있는 버전이 빠르게 확산될 수 있고, 롤백 시에도 Pod를 다시 생성해야 하므로 복구 시간이 길어집니다.
 
@@ -57,15 +69,17 @@ SRE의 모든 업무는 **SLO**(Service Level Objective)라는 목표 아래 계
 
 **카나리 배포**는 새 버전에 전체 트래픽의 일부(예: 10%)만 먼저 전환하고, 문제가 없음을 확인한 후 점진적으로 트래픽 비율을 높여가는 방식입니다. '카나리'라는 이름은 과거 광부들이 갱도에 카나리아 새를 데리고 들어가 유독 가스를 조기에 감지했던 것에서 유래했습니다. 이와 마찬가지로 카나리 배포는 소량의 트래픽을 새 버전에 먼저 보내 문제를 조기에 발견하는 역할을 합니다.
 
-<!-- TODO: replace with actual image — 사진 2: 카나리아 새 -->
+![카나리아 새](../../../assets/argo-rollouts-canary-deployment-fig2.png)
+<center><사진 2: 카나리아 새></center>
 
 이 방식의 핵심적인 장점은 위험 노출 범위를 최소화할 수 있다는 점입니다. 새 버전에 문제가 있더라도 초기 단계에서는 소수의 사용자만 영향을 받으며, 이상 징후가 감지되면 트래픽을 즉시 기존 버전으로 되돌릴 수 있습니다.
 
 딜라이트룸이 카나리 배포를 선택한 이유는 명확했습니다. 앞서 정의한 프로젝트 목표, 즉 **점진적 트래픽 전환**, **자동화된 이상 탐지**, **무인 롤백**을 구현하기에 카나리 배포가 가장 적합한 전략이었기 때문입니다. 5%의 트래픽으로 새 버전을 검증하는 동안 에러율이나 레이턴시에 이상이 감지되면 자동으로 롤백하고, 문제가 없으면 다음 단계로 트래픽을 확대하는 구조는 저희가 원하는 *배포가 두렵지 않은 환경*을 만들기 위한 핵심 요소였습니다.
 
-### Argo Rollouts란?
+## Argo Rollouts란?
 
-<!-- TODO: replace with actual image — 사진 3: Argo Rollouts 로고 -->
+![Argo Rollouts 로고](../../../assets/argo-rollouts-canary-deployment-fig3.png)
+<center><사진 3: Argo Rollouts></center>
 
 Argo Rollouts는 쿠버네티스 환경에서 점진적 배포 전략을 구현할 수 있게 해주는 오픈소스 도구입니다. 쿠버네티스의 기본 Deployment 리소스를 대체하는 Rollout이라는 커스텀 리소스를 제공하며, 이를 통해 카나리 배포와 블루/그린 배포를 선언적으로 정의하고 실행할 수 있습니다.
 
@@ -87,11 +101,12 @@ Rollout 리소스는 기존 Deployment를 대체할 수 있도록 설계된 워�
 
 이러한 이유로 저희는 카나리 배포를 구현하기 위한 도구로 Argo Rollouts를 선택했습니다.
 
-### 전체 아키텍처 살펴보기
+## 전체 아키텍처 살펴보기
 
 아래를 통해 딜라이트룸의 Argo Rollouts를 활용한 카나리 배포 아키텍처의 전체 구조와 주요 구성 요소를 살펴보겠습니다.
 
-<!-- TODO: replace with actual image — 사진 4: 딜라이트룸의 Argo Rollouts 아키텍처 -->
+![딜라이트룸의 Argo Rollouts 아키텍처](../../../assets/argo-rollouts-canary-deployment-fig4.png)
+<center><사진 4: 딜라이트룸의 Argo Rollouts 아키텍처 (Google Gemini 3 Pro를 이용하여 직접 생성)></center>
 
 (1) **Argo Rollouts 컨트롤러**: 클러스터 내의 Rollout 리소스 변경을 감지하고, 정의된 배포 전략에 따라 클러스터 상태를 자동으로 조정하는 역할을 합니다. 딜라이트룸은 여러 개의 EKS 클러스터를 운영하고 있는데, Argo Rollouts 컨트롤러는 멀티 클러스터를 지원하지 않기 때문에 각 클러스터마다 독립적으로 컨트롤러를 설치하여 운영하고 있습니다.
 
@@ -103,7 +118,7 @@ Ingress로 들어온 외부 트래픽은 Service를 거쳐 스테이블 ReplicaS
 
 (4) **AnalysisTemplate과 AnalysisRun**: 메트릭 기반 자동 분석 및 롤백을 담당하는 구성 요소입니다. AnalysisTemplate에는 어떤 메트릭을 조회하고, 어떤 조건에서 성공 또는 실패로 판단할지를 정의합니다. 배포가 시작되면 이 템플릿을 기반으로 AnalysisRun이 생성되어 실제 메트릭 분석을 수행합니다. 딜라이트룸은 데이터독을 메트릭 제공자로 연동하여 에러율, 레이턴시 등의 지표를 실시간으로 분석합니다. 분석 결과가 정상이면 다음 단계로 자동 승격되고, 임계값을 초과하면 즉시 롤백이 실행됩니다.
 
-### Argo Rollouts 구축 과정
+## Argo Rollouts 구축 과정
 
 앞서 설명했듯이 딜라이트룸은 기존에 쿠버네티스 Deployment를 이용해 애플리케이션을 배포하고 관리하고 있었습니다. 이러한 환경에서 Argo Rollouts를 가장 안전하게 도입하는 방법은 먼저 Argo Rollouts 컨트롤러를 포함한 모든 구성 요소를 갖춘 뒤, 기존 Deployment로 향하던 트래픽을 Rollout으로 안전하게 전환하는 것입니다.
 
@@ -195,7 +210,7 @@ AnalysisTemplate은 '어떤 메트릭을 조회하고, 어떤 조건을 만족�
 
 여기까지 구축을 완료하면, 기존 Deployment로 배포된 Pod들과 새로 생성한 Rollout으로 배포된 Pod들이 동시에 존재하게 됩니다. 그러나 현재 실제 트래픽을 받는 Ingress의 백엔드 서비스는 Deployment의 Pod들을 바라보고 있기 때문에 Rollout으로 배포된 Pod들에게는 아직 실제 사용자 트래픽이 전달되지 않는 상태입니다.
 
-### 기존 Deployment에서 Rollout으로 무중단 마이그레이션하기
+## 기존 Deployment에서 Rollout으로 무중단 마이그레이션하기
 
 Rollout 환경 구축을 마쳤으니, 이제 기존 Deployment로 향하는 트래픽을 Rollout으로 전환해야 합니다. 이 과정에서 가장 중요한 것은 **무중단 마이그레이션**입니다. 운영 환경에서 수많은 사용자의 트래픽이 오가는 만큼, 잠시의 다운타임도 허용할 수 없었습니다.
 
@@ -203,7 +218,8 @@ Argo Rollouts [공식 문서](https://argo-rollouts.readthedocs.io/en/stable/mig
 
 전체 마이그레이션 과정은 다음과 같습니다.
 
-<!-- TODO: replace with actual image — 사진 5: 딜라이트룸의 Deployment에서 Rollout으로의 마이그레이션 과정 -->
+![딜라이트룸의 Deployment에서 Rollout으로의 마이그레이션 과정](../../../assets/argo-rollouts-canary-deployment-fig5.png)
+<center><사진 5: 딜라이트룸의 Deployment에서 Rollout으로의 마이그레이션 과정 (출처: 본인)></center>
 
 **0단계: 초기 상태**
 
@@ -241,7 +257,7 @@ Argo Rollouts [공식 문서](https://argo-rollouts.readthedocs.io/en/stable/mig
 
 이처럼 안전한 무중단 마이그레이션을 위해서는 섬세하고 단계적인 작업이 필요합니다. 저희는 **개발 환경에서 지속적으로 트래픽을 흘려보내며 각 단계를 여러 차례 검증한 후, 운영 환경에 적용**했습니다.
 
-### Argo Rollouts 적용 후 어떻게 되었나요?
+## Argo Rollouts 적용 후 어떻게 되었나요?
 
 저희는 지금까지 정리한 과정을 거쳐 2025년 9월 초부터 모든 운영 환경에 Argo Rollouts를 적용하기 시작했습니다. 적용 후 가장 많이 들었던 피드백은 **배포에 대한 심리적 부담이 줄어들었다**는 것이었습니다. 평소 배포를 자주 진행하는 엔지니어들이 직접 저에게 이런 변화를 전해주었을 때 이 프로젝트를 진행하길 잘했다는 보람을 느꼈습니다. 물론 개발 환경에서의 테스트는 여전히 철저히 진행하지만, 이전처럼 배포 버튼을 누른 뒤 모니터링 대시보드를 긴장하며 지켜볼 필요가 없어졌습니다.
 
@@ -253,15 +269,17 @@ Argo Rollouts [공식 문서](https://argo-rollouts.readthedocs.io/en/stable/mig
 
 기존에는 CI/CD 파이프라인을 깃허브 액션으로 구성하고 있는데, 워크플로우 실행 시 배포 전략을 롤링 업데이트와 카나리 중에서 선택할 수 있도록 개선했습니다. Rollout 템플릿도 선택한 옵션에 따라 다르게 렌더링되도록 구성했습니다.
 
-<!-- TODO: replace with actual image — 사진 6: 깃허브 워크플로우 실행 시 배포 전략 선택 화면 -->
+![깃허브 워크플로우 실행 시 배포 전략 선택 화면](../../../assets/argo-rollouts-canary-deployment-fig6.png)
+<center><사진 6: 깃허브 워크플로우 실행 시 배포 전략 선택 화면 (출처: 본인)></center>
 
 두 번째로, **슬랙 알림을 개선**했습니다. 초기에는 단순히 주요 이벤트만 알림으로 보냈는데, 팀원들의 피드백을 반영하여 더 유용한 형태로 다듬었습니다. 알림 메시지에 대시보드로 바로 이동할 수 있는 링크를 추가하고, 각 배포 단계의 진행 상황은 스레드에 정리하여 알림 피로도를 줄였습니다. 배포 완료나 롤백 발생 같은 주요 변화만 채널에 포스트로 노출되도록 구성했습니다.
 
-<!-- TODO: replace with actual image — 사진 7: 딜라이트룸의 Argo Rollouts 슬랙 알림 화면 -->
+![딜라이트룸의 Argo Rollouts 슬랙 알림 화면](../../../assets/argo-rollouts-canary-deployment-fig7.png)
+<center><사진 7: 딜라이트룸의 Argo Rollouts 슬랙 알림 화면 (출처: 본인)></center>
 
 이러한 개선 과정을 거쳐 현재 엔지니어들은 새로운 배포 파이프라인에 빠르게 적응하여 자신감 있게 배포를 진행하고 있습니다. Rollout 리소스가 기존 Deployment와 완전히 호환되기 때문에, 배포하는 개발자 입장에서는 기존과 크게 달라지는 점이 없다는 것도 빠른 도입의 원동력이 되었습니다.
 
-### Argo Rollouts 도입으로 얻은 교훈과 향후 도전 과제
+## Argo Rollouts 도입으로 얻은 교훈과 향후 도전 과제
 
 입사한 지 얼마 되지 않아 팀의 배포 방식을 변경하는 큰 프로젝트를 맡게 되었습니다. 배포 프로세스는 팀 전체가 사용하는 것이기 때문에, 그만큼 책임감을 가지고 임했습니다.
 
@@ -269,7 +287,8 @@ Argo Rollouts [공식 문서](https://argo-rollouts.readthedocs.io/en/stable/mig
 
 이를 위해 **엔지니어들을 위한 문서화**에도 많은 공을 들였습니다. Deployment에서 Argo Rollouts로 전환하게 된 배경, 배포 프로세스가 어떻게 변화하는지, 배포 모니터링과 제어 방법은 어떻게 달라지는지, 그리고 트러블슈팅 가이드와 FAQ를 정리한 'Argo Rollouts 활용법 및 주의사항 안내' 문서를 노션에 작성하여 공유했습니다.
 
-<!-- TODO: replace with actual image — 사진 8: 엔지니어들에게 Argo Rollouts 활용법을 안내하기 위한 문서 -->
+![엔지니어들에게 Argo Rollouts 활용법을 안내하기 위한 문서](../../../assets/argo-rollouts-canary-deployment-fig8.png)
+<center><사진 8: 엔지니어들에게 Argo Rollouts 활용법을 안내하기 위한 문서 (일부) (출처: 본인)></center>
 
 **딜라이트룸에서는 구성원 간의 커뮤니케이션을 매우 중요하게 여기고 있습니다.** 그래서인지 문서화와 서로간의 정렬(Alignment)에 많은 신경을 쓰는 문화가 있다는 인상을 받았고, 저 역시 이에 맞춰 문서를 철저히 준비하고자 했습니다.
 

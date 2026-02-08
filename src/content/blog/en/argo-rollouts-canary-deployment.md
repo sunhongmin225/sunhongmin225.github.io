@@ -2,12 +2,13 @@
 title: "Building a Fearless Deployment Culture: Automating Canary Deployments with Argo Rollouts"
 description: "How we built an automated canary deployment pipeline with Argo Rollouts and Datadog to protect 99.9% availability and eliminate deployment anxiety."
 pubDate: 2025-12-17
-heroImage: ../../../assets/argo-rollouts-canary-deployment-hero.jpeg
+heroImage: ../../../assets/argo-rollouts-canary-deployment-hero.png
+heroImageCaption: "Building a Fearless Deployment Culture: Automating Canary Deployments with Argo Rollouts (generated using Google Gemini 3 Pro)"
 ---
 
 > **Originally published** on the [DelightRoom Tech Blog](https://medium.com/delightroom/%EB%B0%B0%ED%8F%AC%EA%B0%80-%EB%91%90%EB%A0%B5%EC%A7%80-%EC%95%8A%EC%9D%80-%ED%8C%80-%EB%A7%8C%EB%93%A4%EA%B8%B0-argo-rollouts%EB%A1%9C-%EC%B9%B4%EB%82%98%EB%A6%AC-%EB%B0%B0%ED%8F%AC-%EC%9E%90%EB%8F%99%ED%99%94%ED%95%98%EA%B8%B0-c60a23a46da3). Republished here on the author's personal blog.
 
-### Hi, I'm Dan (Sunhong Min), SRE at DelightRoom.
+## Hi, I'm Dan (Sunhong Min), SRE at DelightRoom.
 
 I joined DelightRoom as a Site Reliability Engineer in August 2025. DelightRoom is a startup that operates [Alarmy](https://alar.my/), an alarm app used by 3.5 million people worldwide every day, and [DARO](https://daro.so/), a B2B ad monetization solution with a combined MAU exceeding 40 million. The opportunity to own service reliability in such a high-traffic environment is what drew me to the team.
 
@@ -15,13 +16,14 @@ SRE is a discipline that applies software engineering practices to manage the re
 
 Today, I want to share my very first project after joining: **automating canary deployments with Argo Rollouts**. I'll walk through the limitations we faced with our existing deployment approach, why we chose canary deployments and Argo Rollouts, and how we actually implemented and rolled it out. I hope this helps teams facing similar challenges.
 
-### Why did we need to improve the deployment pipeline?
+## Why did we need to improve the deployment pipeline?
 
 Every SRE initiative is planned and executed under **SLO (Service Level Objective)** targets. An SLO is a quantitative goal for performance and availability that a service must achieve over a given period, and the **Error Budget** is the total amount of allowable failure under that SLO.
 
 DelightRoom's SLO is set at "99.9% or higher service availability over the past month." What does 99.9% actually mean? Let's calculate the error budget:
 
-<!-- TODO: replace with actual image — Formula 1: Error budget calculation -->
+![Error budget calculation](../../../assets/argo-rollouts-canary-deployment-formula1.png)
+<center><Formula 1: Error budget when the SLO is set to 99.9% or higher service availability over a month></center>
 
 A 0.1% failure allowance per month works out to roughly 43.2 minutes. That's our team's entire monthly error budget. Put another way, **just 5 minutes of downtime consumes about 4 days' worth of error budget**. For a service used by millions of users worldwide, that number carries serious weight. A few deployment mishaps could threaten the entire month's stability target.
 
@@ -45,11 +47,21 @@ Specifically, we aimed to achieve three things:
 
 The solution we chose to achieve these goals was canary deployment automation using Argo Rollouts integrated with Datadog.
 
-### What is canary deployment?
+## What is canary deployment?
 
 DelightRoom manages all its servers in a Kubernetes environment. There are several strategies for deploying new application versions in Kubernetes, with the most common being **Rolling Update**, **Blue/Green**, and **Canary** deployments.
 
-<!-- TODO: replace with actual image — Photo 1: Three deployment strategies compared -->
+![Three deployment strategies compared](../../../assets/argo-rollouts-canary-deployment-fig1.png)
+<center><Photo 1: Three common deployment strategies for applications in a Kubernetes environment (generated using Google Gemini 3 Pro)></center>
+
+| | Rolling Update | Blue/Green | Canary |
+|---|---|---|---|
+| Deployment method | Sequentially replace existing Pods with new version | Provision a separate new version environment, then switch traffic all at once | Route a small portion of traffic to the new version first, then gradually increase |
+| Traffic shifting | Per Pod | Instant (0% → 100%) | Percentage-based (e.g., 10% → 50% → 100%) |
+| Rollback speed | Slow (requires Pod recreation) | Fast (traffic switch only) | Fast (traffic switch only) |
+| Resource usage | Low | High (requires 2x infrastructure) | Medium |
+| Blast radius | Wide (all users may be affected during deployment) | Wide (all users affected after switch) | Narrow (only a subset of users affected initially) |
+<center><Table 1: Comparison of rolling update, blue/green, and canary deployment strategies></center>
 
 **Rolling Update** is Kubernetes' default deployment strategy, requiring no additional configuration. However, as mentioned earlier, since the rollout happens quickly, a buggy version can spread rapidly. Rollbacks also take longer since Pods need to be recreated.
 
@@ -57,15 +69,17 @@ DelightRoom manages all its servers in a Kubernetes environment. There are sever
 
 **Canary deployment** first routes only a fraction of total traffic (e.g., 10%) to the new version. After confirming there are no issues, it gradually increases the traffic ratio. The name "canary" comes from the historical practice of miners bringing canary birds into tunnels to detect toxic gases early. Similarly, canary deployment sends a small amount of traffic to the new version first to catch problems early.
 
-<!-- TODO: replace with actual image — Photo 2: Canary bird -->
+![Canary bird](../../../assets/argo-rollouts-canary-deployment-fig2.png)
+<center><Photo 2: Canary bird></center>
 
 The key advantage of this approach is minimizing the blast radius. Even if the new version has issues, only a small subset of users is affected in the early stages. When anomalies are detected, traffic can be immediately redirected back to the stable version.
 
 The reason DelightRoom chose canary deployment was clear. It was the best strategy to implement our project goals: **gradual traffic shifting**, **automated anomaly detection**, and **unattended rollback**. The structure of verifying a new version with 5% of traffic, automatically rolling back if error rates or latency anomalies are detected, and expanding traffic to the next stage if everything looks good was the core element for creating the *fearless deployment environment* we wanted.
 
-### What is Argo Rollouts?
+## What is Argo Rollouts?
 
-<!-- TODO: replace with actual image — Photo 3: Argo Rollouts logo -->
+![Argo Rollouts logo](../../../assets/argo-rollouts-canary-deployment-fig3.png)
+<center><Photo 3: Argo Rollouts></center>
 
 Argo Rollouts is an open-source tool that enables progressive delivery strategies in Kubernetes environments. It provides a custom resource called Rollout that replaces the standard Kubernetes Deployment resource, allowing you to declaratively define and execute canary and blue/green deployments.
 
@@ -87,11 +101,12 @@ Argo Rollouts was the optimal choice for DelightRoom's environment for the follo
 
 For these reasons, we chose Argo Rollouts as our tool for implementing canary deployments.
 
-### Architecture overview
+## Architecture overview
 
 Let's examine the overall structure and key components of DelightRoom's canary deployment architecture using Argo Rollouts.
 
-<!-- TODO: replace with actual image — Photo 4: DelightRoom's Argo Rollouts architecture -->
+![DelightRoom's Argo Rollouts architecture](../../../assets/argo-rollouts-canary-deployment-fig4.png)
+<center><Photo 4: DelightRoom's Argo Rollouts architecture (generated using Google Gemini 3 Pro)></center>
 
 (1) **Argo Rollouts Controller**: Watches for changes to Rollout resources in the cluster and automatically adjusts the cluster state according to the defined deployment strategy. DelightRoom operates multiple EKS clusters, and since the Argo Rollouts controller doesn't support multi-cluster, we install and operate a controller independently in each cluster.
 
@@ -103,7 +118,7 @@ External traffic entering through the Ingress is distributed to the Stable and C
 
 (4) **AnalysisTemplate and AnalysisRun**: Components responsible for metric-based automated analysis and rollback. AnalysisTemplate defines which metrics to query and under what conditions to judge success or failure. When a deployment starts, an AnalysisRun is created from this template to perform the actual metric analysis. DelightRoom integrates Datadog as the metric provider to analyze error rates, latency, and other metrics in real time. If the analysis results are healthy, the deployment automatically promotes to the next stage; if thresholds are exceeded, a rollback executes immediately.
 
-### The Argo Rollouts build process
+## The Argo Rollouts build process
 
 As mentioned, DelightRoom was already deploying and managing applications using Kubernetes Deployments. The safest way to introduce Argo Rollouts in this environment was to first set up all components including the Argo Rollouts controller, then safely transition traffic from the existing Deployments to Rollouts.
 
@@ -195,7 +210,7 @@ AnalysisTemplate defines "which metrics to query and what conditions determine s
 
 Once this build is complete, Pods from both the existing Deployment and the new Rollout coexist. However, since the live traffic Ingress's backend service still points to the Deployment's Pods, no actual user traffic reaches the Rollout Pods yet.
 
-### Zero-downtime migration from Deployment to Rollout
+## Zero-downtime migration from Deployment to Rollout
 
 With the Rollout environment built, it was time to transition traffic from the existing Deployment to the Rollout. The most critical aspect of this process was **zero-downtime migration**. With live user traffic flowing in the production environment, not even a moment of downtime was acceptable.
 
@@ -203,7 +218,8 @@ The Argo Rollouts [official documentation](https://argo-rollouts.readthedocs.io/
 
 The full migration process went as follows:
 
-<!-- TODO: replace with actual image — Photo 5: DelightRoom's Deployment-to-Rollout migration process -->
+![DelightRoom's Deployment-to-Rollout migration process](../../../assets/argo-rollouts-canary-deployment-fig5.png)
+<center><Photo 5: DelightRoom's migration process from Deployment to Rollout (source: author)></center>
 
 **Step 0: Initial state**
 
@@ -241,7 +257,7 @@ The Canary ReplicaSet that was just the new version now becomes the Stable Repli
 
 Safe zero-downtime migration like this requires careful, step-by-step work. We **continuously sent traffic in the development environment, validated each step multiple times, and then applied it to production**.
 
-### What happened after adopting Argo Rollouts?
+## What happened after adopting Argo Rollouts?
 
 Following the process outlined above, we started applying Argo Rollouts to all production environments beginning in early September 2025. The most common feedback was that **the psychological burden of deployments had decreased**. When engineers who frequently deploy came to me personally to share this change, I felt genuinely rewarded for having taken on this project. Of course, testing in development environments is still thorough, but there's no longer a need to nervously watch the monitoring dashboard after pressing the deploy button.
 
@@ -253,15 +269,17 @@ First, we **added a deployment strategy selection option**. Initially, all deplo
 
 We updated the CI/CD pipeline (built with GitHub Actions) so that engineers could choose between rolling update and canary strategies when triggering the workflow. The Rollout template also renders differently based on the selected option.
 
-<!-- TODO: replace with actual image — Photo 6: Deployment strategy selection in the GitHub workflow -->
+![Deployment strategy selection in the GitHub workflow](../../../assets/argo-rollouts-canary-deployment-fig6.png)
+<center><Photo 6: Deployment strategy selection in the GitHub workflow (source: author)></center>
 
 Second, we **improved Slack notifications**. Initially, we only sent notifications for major events. Based on team feedback, we refined them to be more useful: we added links to jump directly to the dashboard, organized each deployment stage's progress in threads to reduce notification fatigue, and configured only major changes like deployment completion or rollback to appear as channel posts.
 
-<!-- TODO: replace with actual image — Photo 7: DelightRoom's Argo Rollouts Slack notification -->
+![DelightRoom's Argo Rollouts Slack notification](../../../assets/argo-rollouts-canary-deployment-fig7.png)
+<center><Photo 7: DelightRoom's Argo Rollouts Slack notification (source: author)></center>
 
 Through these improvements, engineers have quickly adapted to the new deployment pipeline and now deploy with confidence. The fact that the Rollout resource is fully compatible with the existing Deployment meant that from a deploying developer's perspective, not much changed — which was a major driver of quick adoption.
 
-### Lessons learned and future challenges
+## Lessons learned and future challenges
 
 Shortly after joining, I took on a large project that changed the team's entire deployment workflow. Since the deployment process is something the whole team uses, I approached it with a strong sense of responsibility.
 
@@ -269,7 +287,8 @@ The two things I considered most important during this project were: first, **ha
 
 To this end, I put significant effort into **documentation for engineers**. I wrote and shared an "Argo Rollouts Usage Guide and Considerations" document on Notion, covering the background of the transition from Deployment to Argo Rollouts, how the deployment process changes, how deployment monitoring and control differ, along with a troubleshooting guide and FAQ.
 
-<!-- TODO: replace with actual image — Photo 8: Documentation for engineers on Argo Rollouts usage -->
+![Documentation for engineers on Argo Rollouts usage](../../../assets/argo-rollouts-canary-deployment-fig8.png)
+<center><Photo 8: Documentation for engineers on Argo Rollouts usage (partial) (source: author)></center>
 
 **Communication between team members is highly valued at DelightRoom.** The culture places great emphasis on documentation and alignment, and I wanted to prepare my documentation accordingly.
 

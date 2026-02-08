@@ -3,6 +3,7 @@ title: "Managing Kubernetes Resources with Argo CD and GitOps at blux"
 description: "How blux leveraged Argo CD and GitOps to improve the efficiency and reliability of Kubernetes resource management."
 pubDate: 2025-02-06
 heroImage: ../../../assets/argocd-gitops-kubernetes-hero.png
+heroImageCaption: "Thumbnail image"
 ---
 
 > **Originally published** on the [blux Tech Blog](https://blog.blux.ai/argo-cd%EC%99%80-%EA%B9%83%EC%98%B5%EC%8A%A4%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EB%B8%94%EB%9F%AD%EC%8A%A4%EC%9D%98-%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4-%EC%9E%90%EC%9B%90-%EA%B4%80%EB%A6%AC-%EB%85%B8%ED%95%98%EC%9A%B0-41764). Republished here on the author's personal blog.

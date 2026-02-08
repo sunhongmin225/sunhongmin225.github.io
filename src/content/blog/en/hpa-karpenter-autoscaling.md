@@ -3,6 +3,7 @@ title: "Building an Autoscaling System with HPA and Karpenter in Kubernetes"
 description: "How to build an autoscaling system using HPA and Karpenter to automatically handle traffic fluctuations in a Kubernetes environment."
 pubDate: 2024-01-22
 heroImage: ../../../assets/hpa-karpenter-autoscaling-hero.webp
+heroImageCaption: "Thumbnail image"
 ---
 
 > **Originally published** on the [blux Tech Blog](https://blog.blux.ai/kubernetes-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C-hpa%EC%99%80-karpenter%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-autoscaling-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0-17394). Republished here on the author's personal blog.
