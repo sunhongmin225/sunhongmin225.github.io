@@ -4,7 +4,7 @@ description: "Kubernetes Secrets의 Base64 인코딩 취약점과 이를 해결�
 pubDate: 2024-01-16
 heroImage: ../../../assets/sealed-secrets-hero.png
 heroImageCaption: "썸네일 이미지"
-tags: ["Kubernetes", "Security"]
+tags: ["Kubernetes", "Security", "GitOps", "Secrets Management", "DevOps"]
 ---
 
 > **원문:** 이 글은 [blux 기술 블로그](https://blog.blux.ai/sealed-secrets-github-public-repository%EC%97%90-%EC%98%AC%EB%A0%A4%EB%8F%84-%EB%90%98%EB%8A%94-%EC%95%88%EC%A0%84%ED%95%9C-kubernetes-secrets-17393)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.

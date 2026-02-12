@@ -74,8 +74,11 @@ title: "{original Korean title}"
 description: "{original Korean subtitle/description from the source, or a 1-sentence summary only if the source has none}"
 pubDate: {YYYY-MM-DD from source}
 heroImage: ../../../assets/{slug}-hero.{ext}  # only if hero image was downloaded
+tags: ["{tag1}", "{tag2}", "{tag3}", "{tag4}", "{tag5}"]  # exactly 5 tags
 ---
 ```
+
+**Tags — exactly 5 per post.** Choose tags that describe the post's key technologies and concepts. Use Title Case (e.g., "Kubernetes", "CI/CD", "Cloud Architecture"). Both the KO and EN posts for the same article must share the same 5 tags.
 
 **Body — in this exact order:**
 1. Attribution blockquote:
@@ -99,6 +102,7 @@ title: "{naturally translated English title}"
 description: "{naturally translated English version of the KO description}"
 pubDate: {same YYYY-MM-DD}
 heroImage: ../../../assets/{slug}-hero.{ext}  # only if hero image was downloaded
+tags: ["{tag1}", "{tag2}", "{tag3}", "{tag4}", "{tag5}"]  # same 5 tags as KO post
 ---
 ```
 
