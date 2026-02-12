@@ -14,7 +14,6 @@ const t = useTranslations(lang);
 ---
 
 <header>
-	<div class="accent-line"></div>
 	<nav>
 		<h2><a href={`/${lang}/`}>{t('site.title')}</a></h2>
 		<div class="internal-links">
@@ -53,10 +52,6 @@ const t = useTranslations(lang);
 		border-bottom: 1px solid var(--divider);
 		transition: background-color var(--transition-normal);
 	}
-	.accent-line {
-		height: 2px;
-		background: var(--accent);
-	}
 	h2 {
 		margin: 0;
 		font-size: 1.1em;
@@ -72,7 +67,7 @@ const t = useTranslations(lang);
 		justify-content: space-between;
 		max-width: var(--listing-width);
 		margin: 0 auto;
-		padding: 0.25em 1.5em 0;
+		padding: 0 1.5em;
 	}
 	nav a {
 		padding: 1em 0.5em;
@@ -97,7 +92,7 @@ const t = useTranslations(lang);
 	@media (max-width: 720px) {
 		nav {
 			flex-wrap: wrap;
-			padding: 0.5em 1em 0;
+			padding: 0 1em;
 		}
 		.internal-links {
 			order: 3;
