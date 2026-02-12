@@ -57,7 +57,7 @@ This second approach is known as **Blue-Green deployment**. In Blue-Green deploy
 The Green environment doesn't need to be an exact copy of Blue — sometimes internal open-source tools get updated during the process. Of course, thorough testing and validation are required to confirm that all applications work as intended in the Green environment.
 
 <!-- TODO: replace with actual image -->
-*blux EKS Cluster Architecture*
+*Figure 1: blux EKS Cluster Architecture*
 
 The general advantages of Blue-Green deployment are:
 
@@ -281,7 +281,7 @@ Continuing with the example of serving the `example` application using the Route
 As mentioned multiple times, the application connected to record #1 and its ALB is deployed in the old cluster, while the one connected to record #2 is in the new cluster. Our ultimate goal is to redirect all external traffic from the old cluster's application to the new cluster's application.
 
 <!-- TODO: replace with actual image -->
-*Blue-Green Deployment Strategy*
+*Figure 2: Blue-Green Deployment Strategy*
 
 When you have two records with different names pointing to applications that do the same thing and want to unify them, Route 53's **Weighted Routing** is the perfect feature. Weighted Routing is a traffic management method provided by Route 53 that lets you distribute traffic across multiple applications by proportion. This enables scenarios like directing more traffic to a specific application or gradually shifting traffic to a new application version.
 
