@@ -104,7 +104,7 @@ tags: ["{tag1}", "{tag2}", "{tag3}", "{tag4}", "{tag5}"]  # exactly 5 tags
 
 **Hero image caption:** If the original source has a caption or alt text for the hero/featured image, use it. Otherwise, use `"썸네일 이미지"` for KO and `"Thumbnail image"` for EN as a fallback.
 
-**Tags — exactly 5 per post.** Choose tags that describe the post's key technologies and concepts. Use Title Case (e.g., "Kubernetes", "CI/CD", "Cloud Architecture"). Both the KO and EN posts for the same article must share the same 5 tags.
+**Tags — exactly 5 per post.** Before choosing tags, scan existing posts (`grep -h '^tags:' src/content/blog/en/*.md`) to collect the set of tags already in use. Prefer reusing existing tags when they genuinely fit the article — this keeps tag colors and grouping consistent. However, do NOT force-fit existing tags; if the article covers a topic not well represented by current tags, create new ones. A good balance is 2-4 existing tags plus 1-3 new tags as needed. Use Title Case (e.g., "Kubernetes", "CI/CD", "Cloud Architecture"). Both the KO and EN posts for the same article must share the same 5 tags.
 
 **Body — in this exact order:**
 1. Attribution blockquote:
