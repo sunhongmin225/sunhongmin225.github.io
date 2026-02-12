@@ -84,6 +84,8 @@ heroImage: ../../../assets/{slug}-hero.{ext}  # only if hero image was downloade
    ```
 2. Full article body — **verbatim** from the source. Preserve all headings, paragraphs, lists, code blocks, blockquotes, and formatting exactly as they appear in the original.
 
+**Caution:** Do NOT include the hero image as an inline image in the body. The hero image is already rendered by the layout via the frontmatter `heroImage` field — duplicating it in the body shows it twice on the page.
+
 **Reference:** `src/content/blog/ko/sealed-secrets.md`
 
 ### Step 7 — Create EN post
@@ -111,6 +113,8 @@ heroImage: ../../../assets/{slug}-hero.{ext}  # only if hero image was downloade
    - Remove redundant parenthetical Korean-to-English definitions that are unnecessary in English
    - Use a direct, tutorial-style voice
    - Do NOT summarize or skip any sections — translate the complete article
+
+**Caution:** Do NOT include the hero image as an inline image in the body. The hero image is already rendered by the layout via the frontmatter `heroImage` field — duplicating it in the body shows it twice on the page.
 
 **Reference:** `src/content/blog/en/sealed-secrets.md`
 

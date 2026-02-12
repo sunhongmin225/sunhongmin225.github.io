@@ -7,9 +7,6 @@ tags: ["Infrastructure as Code", "Claude Code", "AWS", "Pulumi", "DevOps"]
 ---
 
 > **Originally published** on the [DelightRoom Tech Blog](https://medium.com/delightroom/ai%EB%A1%9C-%EC%9A%B0%EB%A6%AC-%ED%9A%8C%EC%82%AC-%EC%9D%B8%ED%94%84%EB%9D%BC-%EC%BD%94%EB%93%9C-%EC%99%84%EB%B2%BD-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0-c9f5cb7f2ef6). Republished here on the author's personal blog.
-
-![Perfectly Managing Our Company's Infrastructure Code with AI](../../../assets/ai-infra-code-management-hero.png)
-
 I work as an SRE in DelightRoom's Foundation group. The Foundation group is responsible for the infrastructure, data pipelines, and frontend foundations that support all of DelightRoom's products. We use **Pulumi** to manage our infrastructure as code. Among various IaC tools like Terraform and Ansible, we chose Pulumi because it lets us define infrastructure using general-purpose programming languages like TypeScript and Python.
 
 ![Pulumi logo](../../../assets/ai-infra-code-management-1.png)

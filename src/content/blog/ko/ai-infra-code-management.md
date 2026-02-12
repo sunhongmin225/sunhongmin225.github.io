@@ -7,9 +7,6 @@ tags: ["Infrastructure as Code", "Claude Code", "AWS", "Pulumi", "DevOps"]
 ---
 
 > **원문:** 이 글은 [DelightRoom 기술 블로그](https://medium.com/delightroom/ai%EB%A1%9C-%EC%9A%B0%EB%A6%AC-%ED%9A%8C%EC%82%AC-%EC%9D%B8%ED%94%84%EB%9D%BC-%EC%BD%94%EB%93%9C-%EC%99%84%EB%B2%BD-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0-c9f5cb7f2ef6)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.
-
-![AI로 우리 회사 인프라 코드 완벽 관리하기](../../../assets/ai-infra-code-management-hero.png)
-
 저는 딜라이트룸의 파운데이션 그룹에서 SRE로 일하고 있습니다. 파운데이션 그룹은 딜라이트룸의 모든 제품의 인프라, 데이터 파이프라인, 프론트엔드까지 기초가 되는 영역을 책임지는 조직으로, 저희는 인프라를 코드로 관리하기 위해 **Pulumi**를 사용하고 있습니다. Terraform, Ansible 등 다양한 IaC 도구 중 Pulumi를 선택한 이유는 TypeScript, Python 같은 범용 프로그래밍 언어로 인프라를 정의할 수 있기 때문입니다.
 
 ![Pulumi 로고](../../../assets/ai-infra-code-management-1.png)
