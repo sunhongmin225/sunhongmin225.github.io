@@ -37,7 +37,7 @@ Match the URL domain/path against the known sources table above.
 
 Make two `WebFetch` calls to the source URL:
 
-1. **Metadata fetch**: Extract the publication date (`pubDate`), title, description, hero/featured image URL, and any inline image URLs.
+1. **Metadata fetch**: Extract the publication date (`pubDate`), title, subtitle/description (if present in the source), hero/featured image URL, and any inline image URLs.
 2. **Full content fetch**: Get the **complete, verbatim Korean article body** — every paragraph, heading, list, code block, blockquote, and image reference. **Do NOT summarize or truncate.** If the content is very long, make multiple WebFetch calls with prompts targeting different sections to reconstruct the full article.
 
 ### Step 3 — Derive slug
@@ -71,7 +71,7 @@ Create `src/content/blog/ko/{slug}.md` with:
 ```yaml
 ---
 title: "{original Korean title}"
-description: "{Korean description — 1-sentence summary of the article}"
+description: "{original Korean subtitle/description from the source, or a 1-sentence summary only if the source has none}"
 pubDate: {YYYY-MM-DD from source}
 heroImage: ../../../assets/{slug}-hero.{ext}  # only if hero image was downloaded
 ---
@@ -96,7 +96,7 @@ Create `src/content/blog/en/{slug}.md` with:
 ```yaml
 ---
 title: "{naturally translated English title}"
-description: "{English description — 1-sentence summary}"
+description: "{naturally translated English version of the KO description}"
 pubDate: {same YYYY-MM-DD}
 heroImage: ../../../assets/{slug}-hero.{ext}  # only if hero image was downloaded
 ---

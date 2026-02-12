@@ -1,6 +1,6 @@
 ---
 title: "AI로 우리 회사 인프라 코드 완벽 관리하기"
-description: "소외된 인프라 코드를 Claude Code와 함께 되살린 여정 — IaC Drift 해결부터 팀 컨벤션 수립까지"
+description: "소외된 인프라 코드를 Claude Code와 함께 되살린 여정"
 pubDate: 2026-02-10
 heroImage: ../../../assets/ai-infra-code-management-hero.png
 tags: ["Infrastructure as Code", "Claude Code", "AWS", "Pulumi", "DevOps"]

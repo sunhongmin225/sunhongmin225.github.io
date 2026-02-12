@@ -1,6 +1,6 @@
 ---
 title: "Perfectly Managing Our Company's Infrastructure Code with AI"
-description: "A journey of reviving neglected infrastructure code with Claude Code — from resolving IaC Drift to establishing team conventions"
+description: "A journey of reviving neglected infrastructure code with Claude Code"
 pubDate: 2026-02-10
 heroImage: ../../../assets/ai-infra-code-management-hero.png
 tags: ["Infrastructure as Code", "Claude Code", "AWS", "Pulumi", "DevOps"]
