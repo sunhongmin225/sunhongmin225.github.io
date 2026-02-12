@@ -7,9 +7,11 @@ tags: ["Infrastructure as Code", "Claude Code", "AWS", "Pulumi", "DevOps"]
 ---
 
 > **Originally published** on the [DelightRoom Tech Blog](https://medium.com/delightroom/ai%EB%A1%9C-%EC%9A%B0%EB%A6%AC-%ED%9A%8C%EC%82%AC-%EC%9D%B8%ED%94%84%EB%9D%BC-%EC%BD%94%EB%93%9C-%EC%99%84%EB%B2%BD-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0-c9f5cb7f2ef6). Republished here on the author's personal blog.
+
 I work as an SRE in DelightRoom's Foundation group. The Foundation group is responsible for the infrastructure, data pipelines, and frontend foundations that support all of DelightRoom's products. We use **Pulumi** to manage our infrastructure as code. Among various IaC tools like Terraform and Ansible, we chose Pulumi because it lets us define infrastructure using general-purpose programming languages like TypeScript and Python.
 
 ![Pulumi logo](../../../assets/ai-infra-code-management-1.png)
+*Figure 1: Pulumi Logo*
 
 One of my key responsibilities is maintaining and improving a stable infrastructure environment. To do this effectively, it's crucial to understand how our current infrastructure is defined in code. One day, I ran `pulumi preview` to assess the state of our infrastructure code. This command compares the current code against actual cloud resources and shows what changes would occur if applied. I expected to see a message saying there were no updates needed, but instead the terminal was flooded with dozens of changes and warning messages.
 
@@ -47,6 +49,7 @@ The fundamental value of IaC isn't simply "creating infrastructure with scripts.
 For this value to be maintained, the following three elements must always be in sync:
 
 ![Code-State-Resource relationship](../../../assets/ai-infra-code-management-2.png)
+*Figure 2: Code-State-Resource Relationship (Generated using Google Gemini 3 Pro)*
 
 - **Code**: Defines the intended state of infrastructure.
 - **State**: A snapshot of the current infrastructure managed by Pulumi.
@@ -108,6 +111,7 @@ To manage this risk, I reasoned that by clearly defining core principles like pr
 ## Claude Code: Maximizing Agent Effectiveness While Ensuring Safety
 
 ![Claude Code logo](../../../assets/ai-infra-code-management-3.png)
+*Figure 3: Claude Code Logo*
 
 Our team chose **Claude Code** among various AI tools for this work, for the following reasons.
 
@@ -401,6 +405,7 @@ The main Agent orchestrated the entire process and coordinated between subagents
 Based on the Rules, Skills, and Agents defined above, the actual work follows this loop:
 
 ![Drift resolution workflow flowchart](../../../assets/ai-infra-code-management-4.png)
+*Figure 4: Drift Resolution Workflow Flowchart (Generated using Google Gemini 3 Pro)*
 
 ### Step 1: Run `pulumi preview`
 
@@ -439,6 +444,7 @@ To fix this, I added a rule to `pulumi-safety.md`: "After any code change, alway
 Unexpected behavior patterns also emerged during complex drift resolution. The Agent initially resolved drift normally by modifying code, but at some point began **indiscriminately adding `ignoreChanges`**. While `ignoreChanges` makes drift disappear from `preview`, it doesn't actually solve the problem — it merely hides it.
 
 ![Agent indiscriminately adding ignoreChanges](../../../assets/ai-infra-code-management-5.png)
+*Figure 5: Agent Indiscriminately Adding ignoreChanges*
 
 To prevent this, I added to `code-conventions.md` that `ignoreChanges` should only be used for externally managed fields (e.g., `desiredCapacity` managed by an autoscaler) and must always include a comment documenting the reason. After explicitly adding the statement "ignoreChanges must never be used to hide unresolved drift," the Agent stopped attempting this shortcut.
 
@@ -451,10 +457,12 @@ Even more complex cases arose when existing code used modules that didn't yet su
 Before starting the project, running `pulumi preview` on the infrastructure repository produced dozens of changes. I remember feeling overwhelmed seeing a mix of `+ create`, `- delete`, and `~ update` results, not knowing where to begin.
 
 ![Before — preview results showing dozens of drifts](../../../assets/ai-infra-code-management-6.png)
+*Figure 6: Before — Preview Results Showing Dozens of Drifts (One of several stacks)*
 
 After working with Claude Code, I could confirm all stacks showing the message that there were no updates needed. Here's one stack where both dev and prod environments show code and actual resources perfectly synchronized.
 
 ![After — preview results showing no updates needed](../../../assets/ai-infra-code-management-7.png)
+*Figure 7: After — Preview Results Showing No Updates Needed (Same stack)*
 
 The Before-After above shows a representative single stack. In practice, this process was repeated across multiple stacks.
 
@@ -467,6 +475,7 @@ But the greater significance goes beyond time savings. While we can't pinpoint e
 The Rules and Skills created in this project didn't end as individual work — they were documented as shared team assets. The configuration files organized in the `.claude` directory are now managed as part of the infrastructure repository, available to any team member.
 
 ![Internal seminar](../../../assets/ai-infra-code-management-8.png)
+*Figure 8: Internal Seminar*
 
 We also created guides on how to use AI Agents when creating or deleting resources. I held an internal seminar to share this experience and documented simple usage instructions in the repository README, ensuring all team members working with infrastructure could leverage AI Agents following established conventions. This reduced the problem of inconsistent coding styles across individuals, enabling consistent generation of clean, maintainable code.
 

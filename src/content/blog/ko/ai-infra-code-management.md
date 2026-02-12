@@ -7,9 +7,11 @@ tags: ["Infrastructure as Code", "Claude Code", "AWS", "Pulumi", "DevOps"]
 ---
 
 > **원문:** 이 글은 [DelightRoom 기술 블로그](https://medium.com/delightroom/ai%EB%A1%9C-%EC%9A%B0%EB%A6%AC-%ED%9A%8C%EC%82%AC-%EC%9D%B8%ED%94%84%EB%9D%BC-%EC%BD%94%EB%93%9C-%EC%99%84%EB%B2%BD-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0-c9f5cb7f2ef6)에 게시된 글을 저자의 개인 블로그에 재게시한 것입니다.
+
 저는 딜라이트룸의 파운데이션 그룹에서 SRE로 일하고 있습니다. 파운데이션 그룹은 딜라이트룸의 모든 제품의 인프라, 데이터 파이프라인, 프론트엔드까지 기초가 되는 영역을 책임지는 조직으로, 저희는 인프라를 코드로 관리하기 위해 **Pulumi**를 사용하고 있습니다. Terraform, Ansible 등 다양한 IaC 도구 중 Pulumi를 선택한 이유는 TypeScript, Python 같은 범용 프로그래밍 언어로 인프라를 정의할 수 있기 때문입니다.
 
 ![Pulumi 로고](../../../assets/ai-infra-code-management-1.png)
+*사진 1: Pulumi 로고*
 
 제가 맡은 주요 업무 중 하나는 안정적인 인프라 환경을 유지하고 개선하는 일입니다. 이를 위해서는 현재 인프라가 코드로 어떻게 정의되어 있는지 파악하는 것이 중요한데요. 하루는 인프라 코드를 파악하기 위해 `pulumi preview`를 실행했습니다. 이 명령어는 현재 코드와 실제 클라우드 리소스를 비교해서 코드를 적용하면 어떤 변경이 일어날지 미리 보여줍니다. 기대했던 건 업데이트할 것이 없다는 메시지였지만, 화면 속 터미널을 가득 채운 건 수십 개의 변경사항과 경고 메시지였습니다.
 
@@ -47,6 +49,7 @@ IaC의 본질적인 가치는 단순히 '스크립트로 인프라를 만든다'
 이 가치가 유지되려면 다음 세 가지 요소가 항상 동기화되어 있어야 합니다.
 
 ![코드-상태-리소스의 관계](../../../assets/ai-infra-code-management-2.png)
+*사진 2: 코드-상태-리소스의 관계 (Google Gemini 3 Pro를 이용하여 직접 생성)*
 
 - **코드(Code)**: 인프라의 의도된 상태를 정의.
 - **상태(State)**: Pulumi가 관리하는 현재 인프라의 스냅샷.
@@ -108,6 +111,7 @@ Drift 복구 작업은 본질적으로 다음과 같은 루프의 반복입니�
 ## Agent의 효용을 극대화하면서도 안전을 확보할 수 있는 Claude Code
 
 ![Claude Code 로고](../../../assets/ai-infra-code-management-3.png)
+*사진 3: Claude Code 로고*
 
 저희 팀은 이 작업을 위해 여러 AI 도구 중 '**Claude Code**'를 선택했는데, 그 이유는 아래와 같습니다.
 
@@ -401,6 +405,7 @@ Stop and ask user when:
 위에서 정의한 Rules, Skills, Agents를 기반으로 실제 작업은 다음과 같은 루프로 진행됩니다.
 
 ![Drift 해결 워크플로우 플로우차트](../../../assets/ai-infra-code-management-4.png)
+*사진 4: Drift 해결 워크플로우 플로우차트 (Google Gemini 3 Pro를 이용하여 직접 생성)*
 
 ### 1단계: `pulumi preview` 실행
 
@@ -439,6 +444,7 @@ Agent가 각 Drift의 상세 내용을 분석합니다. 단순히 유형을 분�
 Agent가 복잡한 Drift를 해결하는 과정에서 예상치 못한 행동 패턴이 나타나기도 했습니다. 처음에는 정상적으로 코드를 수정하며 Drift를 해결하던 Agent가 어느 순간부터 **`ignoreChanges`를 무분별하게 추가**하기 시작했습니다. `ignoreChanges`는 특정 속성의 변경을 Pulumi가 무시하도록 하는 옵션인데, 이를 사용하면 `preview`에서 Drift가 사라지긴 하지만 실제로 문제를 해결한 것이 아니라 눈에 보이지 않게 숨긴 것에 불과합니다.
 
 ![Agent가 ignoreChanges를 무분별하게 추가한 모습](../../../assets/ai-infra-code-management-5.png)
+*사진 5: Agent가 ignoreChanges를 무분별하게 추가한 모습*
 
 이를 방지하기 위해 `code-conventions.md`에 `ignoreChanges`는 오직 외부에서 관리되는 필드(예: 오토스케일러가 관리하는 `desiredCapacity`)에만 사용하고 반드시 사용 이유를 주석으로 문서화하도록 명시했습니다. '아직 해결되지 않은 Drift를 숨기기 위해 `ignoreChanges`를 사용해서는 안 된다'는 문구를 명확히 추가한 이후 Agent는 더 이상 이런 편법을 시도하지 않게 되었습니다.
 
@@ -451,10 +457,12 @@ Agent가 복잡한 Drift를 해결하는 과정에서 예상치 못한 행동 �
 프로젝트를 시작하기 전 인프라 저장소에서 `pulumi preview`를 실행하면 수십 개의 변경사항이 쏟아졌습니다. `+ create`, `- delete`, `~ update`가 뒤섞인 결과를 보면서 어디서부터 손을 대야 할지 막막했던 기억이 납니다.
 
 ![Before — 수십 개의 Drift가 표시된 preview 결과](../../../assets/ai-infra-code-management-6.png)
+*사진 6: Before - 수십 개의 Drift가 표시된 preview 결과 (여러 스택 중 하나의 예시)*
 
 Claude Code와 함께 작업을 진행한 후 모든 스택에서 업데이트할 것이 없다는 메시지를 확인할 수 있었습니다. 아래는 그중 하나의 스택에서 개발 환경과 운영 환경 양쪽 모두 코드와 실제 리소스가 완벽하게 동기화된 모습입니다.
 
 ![After — 업데이트 할 것이 없다고 표시된 preview 결과](../../../assets/ai-infra-code-management-7.png)
+*사진 7: After - 업데이트 할 것이 없다고 표시된 preview 결과 (동일 스택)*
 
 위 Before-After는 대표적인 스택 하나의 화면입니다. 실제로는 이러한 과정을 여러 스택에 걸쳐 반복 수행했습니다.
 
@@ -467,6 +475,7 @@ Claude Code와 함께 작업을 진행한 후 모든 스택에서 업데이트�
 이번 프로젝트에서 만든 Rules와 Skills는 개인 작업에서 끝나지 않고 팀 공용 자산으로 문서화했습니다. `.claude` 디렉토리에 정리된 설정 파일들은 이제 인프라 저장소의 일부로 관리되며 팀원 누구나 동일한 규칙과 워크플로우를 활용할 수 있습니다.
 
 ![사내에서 진행한 세미나](../../../assets/ai-infra-code-management-8.png)
+*사진 8: 사내에서 진행한 세미나*
 
 새로운 리소스를 생성하거나 삭제할 때 AI Agent를 어떻게 활용하면 좋은지에 대한 가이드도 정리했습니다. 사내에서 이번 경험을 공유하는 세미나를 진행했고 저장소에 README로 간단한 사용법을 문서화하여 앞으로 인프라를 다루는 모든 팀원들이 정해진 컨벤션에 따라 AI Agent를 활용할 수 있도록 했습니다. 이를 통해 개인마다 다른 스타일로 코드를 작성하던 문제가 줄어들고 깔끔하고 유지보수성 높은 코드를 일관되게 생성할 수 있게 되었습니다.
 
