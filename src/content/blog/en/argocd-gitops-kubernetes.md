@@ -16,6 +16,7 @@ In May 2023, blux began running its core product recommendation services on Kube
 From the very beginning of setting up the Kubernetes environment, blux invested heavily in building a CI/CD system — an automated pipeline that enables efficient and rapid delivery of applications from development through deployment.
 
 ![CI/CD System](../../../assets/argocd-gitops-kubernetes-1.png)
+*CI/CD System (Source: blackduck.com)*
 
 ### (1) Faster Development Velocity
 
@@ -37,6 +38,7 @@ blux chose Argo CD for efficient, automated management of Kubernetes resources b
 ## What Are Argo CD and GitOps?
 
 ![Argo CD](../../../assets/argocd-gitops-kubernetes-2.png)
+*Argo CD Logo (Source: techicons.dev)*
 
 Argo CD is a declarative application management tool for Kubernetes that automatically syncs and manages cluster state based on a Git repository.
 
@@ -57,6 +59,7 @@ Argo CD is a declarative application management tool for Kubernetes that automat
 - Integrates with tools like Helm charts and Kustomize for more flexible Kubernetes resource management
 
 ![Argo CD declarative tool](../../../assets/argocd-gitops-kubernetes-3.png)
+*Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes (Source: github.com/argoproj)*
 
 Argo CD is the most widely used CD tool in Kubernetes environments worldwide and is maintained as an open-source project.
 
@@ -85,6 +88,7 @@ Integration with CI/CD pipelines was straightforward using workflow automation t
 ## blux's Kubernetes Architecture with Argo CD and GitOps
 
 ![blux Kubernetes Architecture](../../../assets/argocd-gitops-kubernetes-4.png)
+*blux's Kubernetes Architecture Using Argo CD and GitOps (Source: author)*
 
 blux's deployment architecture follows these 7 stages:
 
@@ -195,6 +199,7 @@ Argo CD uses a declarative deployment approach to synchronize the config reposit
 Argo CD deploys the new Collector API version to the Kubernetes cluster based on the updated manifests. The Deployment resource is updated, and existing pods undergo a rolling update to the new image.
 
 ![Pod Rolling Update Process](../../../assets/argocd-gitops-kubernetes-5.png)
+*Pod Rolling Update Process (Source: author)*
 
 New pods in the cluster pull the updated container image from Amazon ECR and start running. Once the deployment completes successfully, the latest version of the Collector API is running in the Kubernetes cluster, ready to handle external requests.
 
@@ -244,6 +249,7 @@ Since adopting Argo CD and GitOps, blux has seen benefits across multiple areas 
 ### (1) Enhanced Real-Time Monitoring with Argo CD Notifications
 
 ![Argo CD Notifications Example](../../../assets/argocd-gitops-kubernetes-6.png)
+*Argo CD Notifications Example (Source: author)*
 
 Currently, Argo CD deployment status is often checked manually through the dashboard or kubectl commands. The plan is to leverage the Argo CD Notifications feature to receive real-time alerts through collaboration tools like Slack. This will enable rapid response when deployment failures or sync errors occur.
 

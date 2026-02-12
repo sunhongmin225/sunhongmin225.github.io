@@ -16,6 +16,7 @@ tags: ["Kubernetes", "GitOps", "Argo CD", "CI/CD", "DevOps"]
 블럭스는 초기에 쿠버네티스 환경을 세팅할 때부터 CI/CD 시스템 구축에 많은 집중을 했습니다. CI/CD 시스템을 구축한다는 것은 애플리케이션 개발 단계부터 배포 때까지의 모든 단계를 자동화를 통해 효율적이고 빠르게 사용자에게 배포할 수 있는 시스템을 의미합니다.
 
 ![CI/CD 시스템](../../../assets/argocd-gitops-kubernetes-1.png)
+*CI/CD 시스템 (출처: blackduck.com)*
 
 ### (1) 개발 속도 향상
 
@@ -37,6 +38,7 @@ tags: ["Kubernetes", "GitOps", "Argo CD", "CI/CD", "DevOps"]
 ## Argo CD와 깃옵스란 무엇인가요?
 
 ![Argo CD](../../../assets/argocd-gitops-kubernetes-2.png)
+*Argo CD 로고 (출처: techicons.dev)*
 
 Argo CD는 쿠버네티스를 위한 선언적 애플리케이션 관리 도구로 깃 리포지토리를 기반으로 클러스터의 상태를 자동으로 동기화하고 관리할 수 있습니다.
 
@@ -57,6 +59,7 @@ Argo CD는 쿠버네티스를 위한 선언적 애플리케이션 관리 도구�
 - 헬름 차트와 커스토마이즈 같은 도구와 통합하여 쿠버네티스 자원을 더욱 유연하게 관리
 
 ![Argo CD declarative tool](../../../assets/argocd-gitops-kubernetes-3.png)
+*Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes (출처: github.com/argoproj)*
 
 Argo CD는 전 세계적으로 쿠버네티스 환경에서 가장 널리 쓰이는 CD 도구로 오픈 소스 형태로 관리되고 있습니다.
 
@@ -85,6 +88,7 @@ Argo CD는 전 세계적으로 쿠버네티스 환경에서 가장 널리 쓰이
 ## Argo CD와 깃옵스를 활용한 블럭스의 쿠버네티스 아키텍처
 
 ![블럭스 쿠버네티스 아키텍처](../../../assets/argocd-gitops-kubernetes-4.png)
+*Argo CD와 깃옵스를 활용한 블럭스의 쿠버네티스 아키텍처 (출처: 자체 제작)*
 
 블럭스의 배포 아키텍처는 다음과 같은 7가지 단계를 거칩니다:
 
@@ -195,6 +199,7 @@ Argo CD는 선언적 배포 방식을 사용하여 컨피그 리포지토리의 
 Argo CD는 변경된 매니페스트를 기반으로 새로운 Collector API 버전을 쿠버네티스 클러스터에 배포합니다. Deployment 리소스가 업데이트되며, 기존 파드가 새로운 이미지로 롤링 업데이트됩니다.
 
 ![파드 롤링 업데이트 과정](../../../assets/argocd-gitops-kubernetes-5.png)
+*파드의 롤링 업데이트 과정 (출처: 자체 제작)*
 
 클러스터 내의 새로운 파드는 Amazon ECR에서 업데이트된 컨테이너 이미지를 가져와 실행합니다. 배포가 정상적으로 완료되면 최종적으로 Collector API의 최신 버전이 쿠버네티스 클러스터에서 가동되며, 외부 요청을 처리할 준비를 마칩니다.
 
@@ -244,6 +249,7 @@ Argo CD는 변경된 매니페스트를 기반으로 새로운 Collector API 버
 ### (1) Argo CD Notifications을 활용한 실시간 모니터링 강화
 
 ![Argo CD Notifications 활용 예시](../../../assets/argocd-gitops-kubernetes-6.png)
+*Argo CD Notifications의 활용 예시 (출처: 자체 제작)*
 
 현재 Argo CD의 배포 상태를 대시보드 혹은 kubectl 명령어로 수동으로 확인하는 경우가 많지만, Argo CD Notifications 기능을 활용하여 Slack과 같은 협업 도구로 실시간 알림을 받을 수 있도록 개선할 예정입니다. 배포 실패나 동기화 오류가 발생했을 때 신속한 대응이 가능할 것입니다.
 

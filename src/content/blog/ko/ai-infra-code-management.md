@@ -3,6 +3,7 @@ title: "AI로 우리 회사 인프라 코드 완벽 관리하기"
 description: "소외된 인프라 코드를 Claude Code와 함께 되살린 여정"
 pubDate: 2026-02-10
 heroImage: ../../../assets/ai-infra-code-management-hero.png
+heroImageCaption: "AI로 우리 회사 인프라 코드 완벽 관리하기 (Google Gemini 3 Pro를 이용하여 직접 생성)"
 tags: ["Infrastructure as Code", "Claude Code", "AWS", "Pulumi", "DevOps"]
 ---
 

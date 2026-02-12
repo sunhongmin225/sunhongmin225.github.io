@@ -26,6 +26,7 @@ At blux, we corrected these misconceptions one by one during our preparation, tu
 SOC 2 is a service organization control report established by the American Institute of Certified Public Accountants (AICPA). It evaluates the security and privacy compliance of cloud services and data processing organizations as a "voluntary compliance standard." For today's B2B SaaS companies, SOC 2 is no longer optional — it has become the de facto required security standard for entering the US and global markets.
 
 ![SOC 2 security standard](../../../assets/soc2-security-journey-1.png)
+*SOC 2 Has Become the De Facto Required Security Standard for Entering the US and Global Markets (Source: AICPA)*
 
 ### The 5 Trust Service Criteria of SOC 2
 

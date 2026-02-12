@@ -56,12 +56,29 @@ From the metadata fetch, find the `featured_image`, `og:image`, or similar hero 
   3. If the detected format doesn't match the extension, rename to the correct extension
 - If the image URL is broken, inaccessible, or missing: skip `heroImage` in the frontmatter entirely. Note this in the final report.
 
-### Step 5 — Inline images
+### Step 5 — Inline images and captions
 
 For each inline image found in the article body:
 
 - If accessible: download to `src/assets/{slug}-{n}.{ext}` (where `{n}` is a sequential number starting from 1) and reference it as `![alt](../../../assets/{slug}-{n}.{ext})` in the markdown
-- If broken/inaccessible: insert a `<!-- TODO: replace with actual image -->` comment at that position in the markdown
+- If broken/inaccessible: insert a `<!-- TODO: replace with actual image — {description} -->` comment at that position in the markdown
+
+**Image captions are MANDATORY.** Every inline image must have a visible caption retrieved from the original source. Captions use italic markdown syntax on the line immediately after the image:
+
+```markdown
+![Alt text](../../../assets/{slug}-{n}.{ext})
+*Caption text here*
+```
+
+- During the content fetch (Step 2), extract all figure captions, `<figcaption>` elements, image alt texts, and any text rendered below/beside images in the original post.
+- For KO posts: use the original Korean caption verbatim.
+- For EN posts: naturally translate the caption to English.
+- If the original source has no caption for an image, create a concise descriptive caption based on the image's context in the article.
+- Caption format examples from existing posts:
+  - `*사진 1: Pulumi 로고*`
+  - `*Figure 1: Pulumi Logo*`
+  - `*CI/CD 시스템 (출처: blackduck.com)*`
+  - `*Architecture Diagram: Kinesis Data Streams → Data Firehose → S3 (Source: author)*`
 
 ### Step 6 — Create KO post
 
@@ -74,9 +91,12 @@ title: "{original Korean title}"
 description: "{original Korean subtitle/description from the source, or a 1-sentence summary only if the source has none}"
 pubDate: {YYYY-MM-DD from source}
 heroImage: ../../../assets/{slug}-hero.{ext}  # only if hero image was downloaded
+heroImageCaption: "{Korean caption for the hero image}"  # only if heroImage is present
 tags: ["{tag1}", "{tag2}", "{tag3}", "{tag4}", "{tag5}"]  # exactly 5 tags
 ---
 ```
+
+**Hero image caption:** If the original source has a caption or alt text for the hero/featured image, use it. Otherwise, use `"썸네일 이미지"` for KO and `"Thumbnail image"` for EN as a fallback.
 
 **Tags — exactly 5 per post.** Choose tags that describe the post's key technologies and concepts. Use Title Case (e.g., "Kubernetes", "CI/CD", "Cloud Architecture"). Both the KO and EN posts for the same article must share the same 5 tags.
 
@@ -102,6 +122,7 @@ title: "{naturally translated English title}"
 description: "{naturally translated English version of the KO description}"
 pubDate: {same YYYY-MM-DD}
 heroImage: ../../../assets/{slug}-hero.{ext}  # only if hero image was downloaded
+heroImageCaption: "{English caption for the hero image}"  # only if heroImage is present
 tags: ["{tag1}", "{tag2}", "{tag3}", "{tag4}", "{tag5}"]  # same 5 tags as KO post
 ---
 ```

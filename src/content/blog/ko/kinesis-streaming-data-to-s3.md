@@ -37,6 +37,7 @@ Amazon S3는 원하는 양의 데이터를 저장하고 검색할 수 있도록 
 따라서 이 데이터를 적절한 포맷으로 S3에 옮길 필요가 있습니다. 그중 한 가지 방법으로 Amazon Data Firehose가 있습니다. Data Firehose는 실시간으로 쌓인 스트리밍 데이터를 수집 및 변환하여 AWS의 데이터 저장소나 분석 서비스 등으로 쉽게 로드할 수 있게 해주는 서비스입니다. 이 서비스를 이용하면 KDS에 쌓인 데이터를 Amazon S3뿐만 아니라 Amazon Redshift, Amazon OpenSearch Service 등 다양한 저장소 및 분석 서비스로 전송할 수 있습니다. 해당 아키텍처를 그림으로 표현하면 아래와 같습니다.
 
 ![Kinesis Data Streams - Data Firehose - S3로 이어지는 아키텍처](../../../assets/kinesis-streaming-data-to-s3-1.png)
+*Kinesis Data Streams - Data Firehose - S3로 이어지는 아키텍처 그림 (출처: 본인)*
 
 위 그림에서 Lambda는 아마존이 서비스 일부로 제공하는 이벤트 기반 서버리스 컴퓨팅 플랫폼입니다. Lambda는 데이터를 변형, 필터링, 압축 해제, 변환, 및 가공하기 위해서 사용될 수 있습니다.
 

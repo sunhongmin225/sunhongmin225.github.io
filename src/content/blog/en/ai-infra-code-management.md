@@ -3,6 +3,7 @@ title: "Perfectly Managing Our Company's Infrastructure Code with AI"
 description: "A journey of reviving neglected infrastructure code with Claude Code"
 pubDate: 2026-02-10
 heroImage: ../../../assets/ai-infra-code-management-hero.png
+heroImageCaption: "Perfectly Managing Our Company's Infrastructure Code with AI (Generated using Google Gemini 3 Pro)"
 tags: ["Infrastructure as Code", "Claude Code", "AWS", "Pulumi", "DevOps"]
 ---
 

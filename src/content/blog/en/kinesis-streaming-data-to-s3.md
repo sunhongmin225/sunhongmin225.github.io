@@ -37,6 +37,7 @@ Amazon S3 is a storage service built to store and retrieve any amount of data. I
 This means the data needs to be moved to S3 in an appropriate format. One way to do this is with Amazon Data Firehose. Data Firehose is a service that collects and transforms real-time streaming data and loads it into AWS data stores and analytics services. Using this service, you can send data from KDS not only to Amazon S3 but also to Amazon Redshift, Amazon OpenSearch Service, and various other storage and analytics services. Here's what the architecture looks like:
 
 ![Architecture diagram: Kinesis Data Streams → Data Firehose → S3](../../../assets/kinesis-streaming-data-to-s3-1.png)
+*Architecture Diagram: Kinesis Data Streams → Data Firehose → S3 (Source: author)*
 
 In the diagram above, Lambda is an event-driven serverless computing platform provided by AWS. Lambda can be used to transform, filter, decompress, convert, and process data.
 
