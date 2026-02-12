@@ -70,14 +70,19 @@ For each inline image found in the article body:
 *Caption text here*
 ```
 
-- During the content fetch (Step 2), extract all figure captions, `<figcaption>` elements, image alt texts, and any text rendered below/beside images in the original post.
-- For KO posts: use the original Korean caption verbatim.
+**Caption rules:**
+
+- **Always use italic markdown `*...*`** — never use `<center>` HTML tags or any other HTML for captions.
+- **Do NOT include numbered prefixes** like `사진 1:`, `그림 2:`, `Figure 1:`, `Photo 3:`, etc. Write just the descriptive caption text.
+- During the content fetch (Step 2), extract all figure captions, `<figcaption>` elements, image alt texts, and any text rendered below/beside images in the original post. Strip any numbered prefixes from the source captions.
+- For KO posts: use the original Korean caption verbatim (minus numbered prefix).
 - For EN posts: naturally translate the caption to English.
 - If the original source has no caption for an image, create a concise descriptive caption based on the image's context in the article.
-- Caption format examples from existing posts:
-  - `*사진 1: Pulumi 로고*`
-  - `*Figure 1: Pulumi Logo*`
+- Caption format examples:
   - `*CI/CD 시스템 (출처: blackduck.com)*`
+  - `*CI/CD System (Source: blackduck.com)*`
+  - `*딜라이트룸의 Argo Rollouts 아키텍처 (Google Gemini 3 Pro를 이용하여 직접 생성)*`
+  - `*Kinesis Data Streams - Data Firehose - S3 아키텍처 그림 (출처: 본인)*`
   - `*Architecture Diagram: Kinesis Data Streams → Data Firehose → S3 (Source: author)*`
 
 ### Step 6 — Create KO post

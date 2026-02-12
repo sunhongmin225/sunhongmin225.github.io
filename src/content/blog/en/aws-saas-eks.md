@@ -16,7 +16,7 @@ Blux (legal entity: Z.ai), a Korean B2B software as a service (SaaS) startup, pr
 SaaS is a cloud-based software delivery model where customers access applications without managing infrastructure, paying through usage-based or subscription models. All tenants operate the same application version and are managed through a unified SaaS Control Plane, enabling efficient feature deployment and seamless scaling.
 
 ![SaaS architecture – Control plane and application plane](../../../assets/aws-saas-eks-en-1.png)
-<center><Figure 1: SaaS architecture – Control plane and application plane></center>
+*SaaS architecture – Control plane and application plane*
 
 As shown in Figure 1, SaaS architecture consists of the control plane and application plane.
 
@@ -49,7 +49,7 @@ Blux provides 100% real-time personalized recommendations. Consider an e-commerc
 ### SaaS architecture on Amazon EKS
 
 ![Blux's architecture](../../../assets/aws-saas-eks-en-2.png)
-<center><Figure 2: Blux's architecture></center>
+*Blux's architecture*
 
 Figure 2 illustrates Blux's enhanced high-level architecture implemented using AWS SaaS architecture patterns.
 
@@ -91,14 +91,14 @@ Blux offers different service experiences which influence how tenants can consum
 Figure 3 illustrates how to provide tenants' node based on tier. Blux offers three tiers: Standard (shared resources), Premium (dedicated resources), and Enterprise (dedicated resources with higher performance).
 
 ![Node architecture based on tier](../../../assets/aws-saas-eks-en-3.png)
-<center><Figure 3: Node architecture based on tier></center>
+*Node architecture based on tier*
 
 Tenant computing resources are isolated through Kubernetes namespaces, providing logical separation within the cluster. This aligns with [AWS EKS SaaS reference architecture](https://github.com/aws-samples/aws-saas-factory-eks-reference-architecture). Premium and Enterprise workloads run on dedicated node groups, preventing noisy neighbor issues.
 
 ### Automated onboarding
 
 ![Automated onboarding process](../../../assets/aws-saas-eks-en-4.png)
-<center><Figure 4: Automated onboarding process></center>
+*Automated onboarding process*
 
 Figure 4 shows the automated tenant onboarding process:
 
@@ -115,7 +115,7 @@ Figure 4 shows the automated tenant onboarding process:
 ### Deployment model
 
 ![Tier-based deployment model](../../../assets/aws-saas-eks-en-5.png)
-<center><Figure 5: Tier-based deployment model></center>
+*Tier-based deployment model*
 
 Figure 5 shows tier-based provisioning for tenant onboarding. Blux offers three tiers: Standard, Premium, and Enterprise. Standard tier tenants share Collector and ML APIs, while Premium and Enterprise tenants receive dedicated Collector and ML APIs with their own endpoints to handle high-volume traffic. The Recommender API is provided exclusively to all tenants, enabling each tenant's Recommender workload to download dedicated models from Amazon S3.
 
