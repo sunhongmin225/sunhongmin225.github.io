@@ -183,6 +183,7 @@ code {
 pre {
 	padding: 1.5em;
 	border-radius: 8px;
+	font-size: 0.85em;
 }
 pre > code {
 	all: unset;
@@ -212,10 +213,17 @@ hr {
 	color: var(--shiki-light) !important;
 	background-color: var(--shiki-light-bg) !important;
 }
+.astro-code {
+	background-color: #f6f8fa !important;
+	border: 1px solid rgb(var(--gray-light));
+}
 [data-theme="dark"] .astro-code,
 [data-theme="dark"] .astro-code span {
 	color: var(--shiki-dark) !important;
 	background-color: var(--shiki-dark-bg) !important;
+}
+[data-theme="dark"] .astro-code {
+	border-color: transparent;
 }
 
 .sr-only {
