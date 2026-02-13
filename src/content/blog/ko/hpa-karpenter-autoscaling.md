@@ -21,7 +21,7 @@ HPA는 애플리케이션의 부하에 따라 자동으로 포드의 수를 조�
 
 다음은 실제 저희 블럭스(blux) 애플리케이션 중 하나의 자원 사용량을 나타낸 그래프입니다. 가로축은 시간으로 총 24시간을 나타내고, 세로축은 vCPU 사용량을 최저치 기준으로 '정규화'하여 나타낸 것입니다.
 
-<!-- TODO: replace with actual image - 블럭스 자원 사용량 그래프 -->
+![Normalized vCPU usage per day](../../../assets/hpa-karpenter-autoscaling-vcpu-usage.png)
 
 그래프를 보시면 사람들의 취침 시간인 오전 2시~8시에는 자원 사용량이 적고, 그 이후로는 점점 사용량이 늘다가 자정 이후로 다시 줄어드는 것을 확인할 수 있습니다.
 
@@ -33,11 +33,11 @@ HPA는 애플리케이션의 부하에 따라 자동으로 포드의 수를 조�
 
 포드 오토스케일링의 방법으로는 대표적으로 HPA(Horizontal Pod Autoscaling)와 VPA(Vertical Pod Autoscaling)가 있습니다. HPA는 아래 그림과 같이 수평적인 방향으로 포드의 개수를 늘리는 방식으로 동작합니다.
 
-<!-- TODO: replace with actual image - HPA 작동방식 다이어그램 -->
+![HPA horizontal scaling — adding more Pod replicas](../../../assets/hpa-karpenter-autoscaling-hpa-diagram.png)
 
 반대로 VPA는 아래 그림과 같이 수직적인 방향으로, 포드에 더 많은 자원을 할당하는 방식으로 동작합니다.
 
-<!-- TODO: replace with actual image - VPA 작동방식 다이어그램 -->
+![VPA vertical scaling — allocating more resources to existing Pods](../../../assets/hpa-karpenter-autoscaling-vpa-diagram.png)
 
 여기서 포드 오토스케일링은 CPU나 메모리를 기준으로 동작하는 것이 기본이나, 사용자가 정의한 커스텀 또는 익스터널 메트릭을 기준으로 동작하게끔 설정할 수도 있습니다. 포드 오토스케일링이 일어나는 상황과 기준에 대해서는 아래에서 좀 더 자세히 다루도록 하겠습니다. 쿠버네티스의 [Autoscaler GitHub Repository](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler#known-limitations)를 보면 CPU나 메모리를 기준으로 포드 오토스케일링을 할 때 VPA와 HPA는 함께 사용되어서는 안 된다고 명시되어 있습니다. 저희는 이 둘 중 HPA를 프로덕션 환경에서 사용하고 있는데 그 이유는 다음과 같습니다.
 

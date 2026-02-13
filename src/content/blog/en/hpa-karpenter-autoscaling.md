@@ -21,7 +21,7 @@ In this post, we'll walk through how to use HPA and Karpenter to autoscale when 
 
 Below is a graph showing the resource usage of one of our blux applications. The horizontal axis represents 24 hours, and the vertical axis shows vCPU usage normalized against the minimum.
 
-<!-- TODO: replace with actual image - blux resource usage graph -->
+![Normalized vCPU usage per day](../../../assets/hpa-karpenter-autoscaling-vcpu-usage.png)
 
 As you can see, resource usage is low during sleeping hours (2 AM–8 AM), gradually increases throughout the day, and drops again after midnight.
 
@@ -33,11 +33,11 @@ This practice of automatically increasing server capacity or count in response t
 
 There are two main approaches to Pod autoscaling: **HPA (Horizontal Pod Autoscaler)** and **VPA (Vertical Pod Autoscaler)**. HPA scales horizontally by adding more Pod replicas, as shown below.
 
-<!-- TODO: replace with actual image - HPA operation diagram -->
+![HPA horizontal scaling — adding more Pod replicas](../../../assets/hpa-karpenter-autoscaling-hpa-diagram.png)
 
 VPA, on the other hand, scales vertically by allocating more resources to existing Pods.
 
-<!-- TODO: replace with actual image - VPA operation diagram -->
+![VPA vertical scaling — allocating more resources to existing Pods](../../../assets/hpa-karpenter-autoscaling-vpa-diagram.png)
 
 Pod autoscaling typically operates based on CPU or memory metrics, but you can also configure it with custom or external metrics. We'll cover the triggers and thresholds in more detail below. The [Kubernetes Autoscaler GitHub Repository](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler#known-limitations) explicitly states that VPA and HPA should not be used together when scaling based on CPU or memory. We chose HPA for our production environment for the following reasons:
 
