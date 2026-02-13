@@ -13,26 +13,26 @@ tags: ["Kubernetes", "CI/CD", "Argo Rollouts", "Deployment Strategy", "Observabi
 
 I joined DelightRoom as a Site Reliability Engineer in August 2025. DelightRoom is a startup that operates [Alarmy](https://alar.my/), an alarm app used by 3.5 million people worldwide every day, and [DARO](https://daro.so/), a B2B ad monetization solution with a combined MAU exceeding 40 million. The opportunity to own service reliability in such a high-traffic environment is what drew me to the team.
 
-SRE is a discipline that applies software engineering practices to manage the reliability and availability of large-scale services. It goes beyond just responding to incidents — encompassing operational automation, observability, incident response protocols, and performance optimization.
+SRE is a discipline that applies software engineering practices to manage the reliability and availability of large-scale services. It goes beyond just responding to incidents — encompassing operational automation, observability (Observability, the ability to understand and assess a system's internal state through its external outputs), incident (Incident, an unexpected event that causes service disruption or quality degradation) response protocols, and performance optimization.
 
-Today, I want to share my very first project after joining: **automating canary deployments with Argo Rollouts**. I'll walk through the limitations we faced with our existing deployment approach, why we chose canary deployments and Argo Rollouts, and how we actually implemented and rolled it out. I hope this helps teams facing similar challenges.
+Today, I want to share my very first project after joining: **'automating canary deployments with Argo Rollouts'**. I'll walk through the limitations we faced with our existing deployment approach, why we chose canary deployments and Argo Rollouts, and how we actually implemented and rolled it out. I hope this helps teams facing similar challenges.
 
 ## Why did we need to improve the deployment pipeline?
 
-Every SRE initiative is planned and executed under **SLO (Service Level Objective)** targets. An SLO is a quantitative goal for performance and availability that a service must achieve over a given period, and the **Error Budget** is the total amount of allowable failure under that SLO.
+Every SRE initiative is planned and executed under **SLO (Service Level Objective)** targets. An SLO is a quantitative goal for performance and availability that a service must achieve over a given period, and the **Error Budget (Error Budget)** is the total amount of allowable failure under that SLO.
 
-DelightRoom's SLO is set at "99.9% or higher service availability over the past month." What does 99.9% actually mean? Let's calculate the error budget:
+DelightRoom's SLO is set at "99.9% or higher service availability (Availability, the proportion of time a system is operational and usable) over the past month." What does 99.9% actually mean? Let's calculate the error budget:
 
 ![Error budget calculation](../../../assets/argo-rollouts-canary-deployment-formula1.png)
 *Formula 1: Error budget when the SLO is set to 99.9% or higher service availability over a month*
 
-A 0.1% failure allowance per month works out to roughly 43.2 minutes. That's our team's entire monthly error budget. Put another way, **just 5 minutes of downtime consumes about 4 days' worth of error budget**. For a service used by millions of users worldwide, that number carries serious weight. A few deployment mishaps could threaten the entire month's stability target.
+Using the formula above, a 0.1% failure allowance per month works out to roughly 43.2 minutes. That's our team's entire monthly error budget. Put another way, **just 5 minutes of downtime consumes about 4 days' worth of error budget**. For a service used by millions of users worldwide, that number carries serious weight. A few deployment mishaps could threaten the entire month's stability target.
 
-When I joined, DelightRoom's server deployments used Kubernetes' built-in Deployment resource with a rolling update strategy.
+When I joined, DelightRoom's server deployments used Kubernetes' (Kubernetes, an open-source platform that automates the deployment, management, and scaling of containerized applications) built-in Deployment (a Kubernetes resource that manages the declarative deployment and updates of applications) resource with a rolling update (Rolling Update, a deployment method that gradually replaces old versions with new ones without service interruption) strategy.
 
 This approach had several structural limitations. New versions would receive 100% of traffic within 1–2 minutes, so if buggy code was deployed, it would instantly affect all users. From spotting an error rate spike on the monitoring dashboard to identifying the cause, deciding to rollback, and actually executing it, the process took anywhere from a few minutes to over 10 minutes. On top of that, every judgment and action depended on humans, so if the responsible engineer was away when a problem occurred, response times would inevitably lag.
 
-In this environment, every deployment was a tense affair. After a release with significant changes, engineers had to watch the monitoring dashboard for several minutes to confirm that error rates and latency metrics stayed stable. They couldn't move on to other work until they verified no unexpected edge cases or API performance degradation had occurred. This tension repeated with every major deployment, driving up fatigue for the engineers involved.
+In this environment, every deployment was a tense affair. After a release with significant changes, engineers had to watch the monitoring dashboard for several minutes to confirm that error rates and latency (Latency, the delay between sending a request and receiving a response) metrics stayed stable. They couldn't move on to other work until they verified no unexpected edge cases or API performance degradation had occurred. This tension repeated with every major deployment, driving up fatigue for the engineers involved.
 
 To solve this, I kicked off a deployment pipeline improvement project as my first task after joining. The goal was defined as follows:
 
@@ -46,7 +46,7 @@ Specifically, we aimed to achieve three things:
 
 (3) **Unattended rollback**: When anomalies are detected, immediately roll back to the previous version without human intervention.
 
-The solution we chose to achieve these goals was canary deployment automation using Argo Rollouts integrated with Datadog.
+The solution we chose to achieve these goals was canary deployment automation using Argo Rollouts integrated with Datadog (Datadog, a cloud-based infrastructure monitoring and analytics platform).
 
 ## What is canary deployment?
 
@@ -64,9 +64,9 @@ DelightRoom manages all its servers in a Kubernetes environment. There are sever
 | Blast radius | Wide (all users may be affected during deployment) | Wide (all users affected after switch) | Narrow (only a subset of users affected initially) |
 *Table 1: Comparison of rolling update, blue/green, and canary deployment strategies*
 
-**Rolling Update** is Kubernetes' default deployment strategy, requiring no additional configuration. However, as mentioned earlier, since the rollout happens quickly, a buggy version can spread rapidly. Rollbacks also take longer since Pods need to be recreated.
+**Rolling Update** is Kubernetes' default deployment strategy, requiring no additional configuration. However, as mentioned earlier, since the rollout happens quickly, a buggy version can spread rapidly. Rollbacks also take longer since Pods (Pod, the smallest deployable unit in Kubernetes, an execution environment containing one or more containers) need to be recreated.
 
-**Blue/Green deployment** fully provisions a new version (Green) environment and then switches traffic all at once. While rollbacks are fast, it requires maintaining two complete sets of infrastructure until the deployment is finalized, making it resource-expensive. Since traffic switching is all-or-nothing (0% or 100%), any issues with the new version immediately affect all users upon switching.
+**Blue/Green deployment** fully provisions a new version (Green) environment and then switches traffic all at once. While rollbacks are fast, it requires maintaining two complete sets of infrastructure (Infrastructure, the foundational structure of hardware, software, networks, etc. needed to operate systems or applications) until the deployment is finalized, making it resource-expensive. Since traffic switching is all-or-nothing (0% or 100%), any issues with the new version immediately affect all users upon switching.
 
 **Canary deployment** first routes only a fraction of total traffic (e.g., 10%) to the new version. After confirming there are no issues, it gradually increases the traffic ratio. The name "canary" comes from the historical practice of miners bringing canary birds into tunnels to detect toxic gases early. Similarly, canary deployment sends a small amount of traffic to the new version first to catch problems early.
 
@@ -82,11 +82,11 @@ The reason DelightRoom chose canary deployment was clear. It was the best strate
 ![Argo Rollouts logo](../../../assets/argo-rollouts-canary-deployment-fig3.png)
 *Photo 3: Argo Rollouts*
 
-Argo Rollouts is an open-source tool that enables progressive delivery strategies in Kubernetes environments. It provides a custom resource called Rollout that replaces the standard Kubernetes Deployment resource, allowing you to declaratively define and execute canary and blue/green deployments.
+Argo Rollouts is an open-source (Open Source, software whose source code is publicly available for anyone to freely use, modify, and distribute) tool that enables progressive delivery strategies in Kubernetes environments. It provides a custom resource (Custom Resource, a user-defined resource type that extends the Kubernetes API) called Rollout that replaces the standard Kubernetes Deployment resource, allowing you to declaratively define and execute canary and blue/green deployments.
 
 The Rollout resource is designed as a drop-in replacement for Deployment. It supports all existing Deployment functionality while **adding advanced deployment features that are difficult to achieve with Deployment alone**.
 
-Key capabilities include blue/green and canary deployment strategy support, fine-grained traffic routing through integration with Ingress controllers or service meshes, deployment analysis through integration with metric providers like Datadog and Prometheus, and automatic promotion or rollback based on analysis results.
+Key capabilities include blue/green and canary deployment strategy support, fine-grained traffic routing (Traffic Routing, directing network traffic to specific paths or target servers) through integration with Ingress (a resource that manages HTTP/HTTPS traffic routing from outside the cluster to internal services) controllers or service meshes (Service Mesh, an infrastructure layer that manages and controls communication between microservices), deployment analysis through integration with metric providers (Metric Provider, an external system that provides metric data needed for deployment analysis) like Datadog and Prometheus (Prometheus, an open-source monitoring system that collects and stores time-series metric data), and automatic promotion (Promotion, the process of transitioning a canary version to the stable version after verification) or rollback based on analysis results.
 
 Additionally, the rolling update strategy that DelightRoom had been using could also be configured via the strategy option in the Rollout resource, which meant we could maintain compatibility with our existing deployment approach while gradually introducing canary deployments.
 
@@ -94,9 +94,9 @@ While there are other tools for implementing canary deployments — Flagger, Spi
 
 Argo Rollouts was the optimal choice for DelightRoom's environment for the following reasons:
 
-(1) DelightRoom uses Nginx Ingress Controller without a service mesh, and Argo Rollouts supports **percentage-based fine-grained traffic splitting using Nginx Ingress Controller alone**, without requiring a service mesh.
+(1) DelightRoom uses Nginx Ingress Controller (an Ingress controller implemented based on Nginx) without a service mesh, and Argo Rollouts supports **percentage-based fine-grained traffic splitting using Nginx Ingress Controller alone**, without requiring a service mesh.
 
-(2) DelightRoom uses Datadog for monitoring, and Argo Rollouts offers **flexible automatic rollback logic based on Datadog metrics** through its AnalysisTemplate resource.
+(2) DelightRoom uses Datadog for monitoring, and Argo Rollouts offers **flexible automatic rollback logic based on Datadog metrics (Metric, measurable numerical data representing a system's state or performance)** through its AnalysisTemplate resource.
 
 (3) **Installation and operations are relatively simple**, and it provides a **dedicated dashboard UI for visually monitoring deployment status**.
 
@@ -104,18 +104,18 @@ For these reasons, we chose Argo Rollouts as our tool for implementing canary de
 
 ## Architecture overview
 
-Let's examine the overall structure and key components of DelightRoom's canary deployment architecture using Argo Rollouts.
+Through Photo 4 below, let's examine the overall structure and key components of DelightRoom's canary deployment architecture using Argo Rollouts.
 
 ![DelightRoom's Argo Rollouts architecture](../../../assets/argo-rollouts-canary-deployment-fig4.png)
 *Photo 4: DelightRoom's Argo Rollouts architecture (Generated using Google Gemini 3 Pro)*
 
 (1) **Argo Rollouts Controller**: Watches for changes to Rollout resources in the cluster and automatically adjusts the cluster state according to the defined deployment strategy. DelightRoom operates multiple EKS clusters, and since the Argo Rollouts controller doesn't support multi-cluster, we install and operate a controller independently in each cluster.
 
-(2) **Stable/Canary ReplicaSets**: When a Rollout resource is created, the controller manages two ReplicaSets — a Stable ReplicaSet handling the current version and a Canary ReplicaSet handling the new version. During a canary deployment, both ReplicaSets exist simultaneously, with requests distributed to each set of Pods based on the traffic ratio.
+(2) **Stable/Canary ReplicaSets**: When a Rollout resource is created, the controller manages two ReplicaSets (ReplicaSet, a Kubernetes resource that ensures a specified number of pod replicas are always running) — a Stable ReplicaSet (Stable ReplicaSet, the set of pods running the currently stable version) handling the current version and a Canary ReplicaSet (Canary ReplicaSet, the set of pods deployed in small quantity to test a new version) handling the new version. During a canary deployment, both ReplicaSets exist simultaneously, with requests distributed to each set of Pods based on the traffic ratio.
 
 (3) **Nginx Ingress Controller**: Handles traffic routing. While not a required component of Argo Rollouts, integration with an Ingress controller or service mesh is needed for percentage-based traffic splitting. DelightRoom already used Nginx Ingress Controller, so we leveraged it.
 
-External traffic entering through the Ingress is distributed to the Stable and Canary ReplicaSets via Services. Argo Rollouts uses Nginx Ingress's canary annotations to split traffic by percentage. For example, at the start of a deployment, only 5% of total traffic goes to the Canary ReplicaSet while the remaining 95% stays with the Stable ReplicaSet.
+External traffic entering through the Ingress is distributed to the Stable and Canary ReplicaSets via Services (Service, an abstraction layer in Kubernetes that provides stable network access to a set of pods). Argo Rollouts uses Nginx Ingress's canary annotations to split traffic by percentage. For example, at the start of a deployment, only 5% of total traffic goes to the Canary ReplicaSet while the remaining 95% stays with the Stable ReplicaSet.
 
 (4) **AnalysisTemplate and AnalysisRun**: Components responsible for metric-based automated analysis and rollback. AnalysisTemplate defines which metrics to query and under what conditions to judge success or failure. When a deployment starts, an AnalysisRun is created from this template to perform the actual metric analysis. DelightRoom integrates Datadog as the metric provider to analyze error rates, latency, and other metrics in real time. If the analysis results are healthy, the deployment automatically promotes to the next stage; if thresholds are exceeded, a rollback executes immediately.
 
@@ -123,11 +123,11 @@ External traffic entering through the Ingress is distributed to the Stable and C
 
 As mentioned, DelightRoom was already deploying and managing applications using Kubernetes Deployments. The safest way to introduce Argo Rollouts in this environment was to first set up all components including the Argo Rollouts controller, then safely transition traffic from the existing Deployments to Rollouts.
 
-DelightRoom manages applications using a GitOps strategy with Argo CD, and we followed this strategy throughout the Argo Rollouts build process. GitOps uses a Git repository as the single source of truth, automatically synchronizing the declared state in the repository with the actual cluster state.
+DelightRoom manages applications using a GitOps strategy with Argo CD, and we followed this strategy throughout the Argo Rollouts build process. GitOps uses a Git repository (Git Repository, a storage space that saves and manages a project's source code and change history) as the single source of truth (Single Source of Truth, the single authoritative source for all data or configuration information), automatically synchronizing the declared state in the repository with the actual cluster state.
 
-In simple terms, when you commit a resource's YAML file to a Git repository, Argo CD detects the change and automatically applies it to the cluster.
+In simple terms, when you commit (Commit, the act of recording and saving code changes in a version control system) a resource's YAML file to a Git repository, Argo CD detects the change and automatically applies it to the cluster.
 
-**The Argo Rollouts controller and dashboard were deployed using the [official Helm chart](https://github.com/argoproj/argo-helm).** The official chart is well-structured, so most settings could be used as-is. We only customized a few things for our environment: PDB settings for high availability, Ingress settings for dashboard access, and Slack notification configuration. For Slack notifications, we configured Notification Templates following the [official documentation](https://argo-rollouts.readthedocs.io/en/stable/generated/notification-services/slack/). To avoid notification noise, we only set up alerts for important events like `analysis-run-error`, `analysis-run-failed`, `rollout-aborted`, and `rollout-completed`.
+**The Argo Rollouts controller and dashboard were deployed using the [official Helm chart (Helm Chart, a collection of templates for packaging and deploying Kubernetes applications)](https://github.com/argoproj/argo-helm).** The official chart is well-structured, so most settings could be used as-is. We only customized a few things for our environment: PDB (PodDisruptionBudget) settings for high availability, Ingress settings for dashboard access, and Slack notification configuration. For Slack notifications, we configured Notification Templates following the [official documentation](https://argo-rollouts.readthedocs.io/en/stable/generated/notification-services/slack/). To avoid notification noise, we only set up alerts for important events like `analysis-run-error`, `analysis-run-failed`, `rollout-aborted`, and `rollout-completed`.
 
 After installing the controller, we **authored the Rollout and AnalysisTemplate resources** to apply to our actual applications. To deploy Argo Rollouts across the multiple applications we manage, we templatized these resources. This way, by simply filling in `values.yaml`, we could apply the same structure to multiple applications with minimal effort. Let's look at the key parts of the Rollout and AnalysisTemplate as applied to our B2B ad monetization solution, DARO.
 
@@ -230,7 +230,7 @@ The starting state before migration. Only the existing Deployment and its connec
 
 Create a Rollout with the same specs as the existing Deployment. The important thing here is that the Rollout's `spec.strategy.canary` subfields (`canaryService`, `stableService`, `steps`, `trafficRouting`) are not yet enabled. The focus at this point is moving traffic from Deployment to Rollout, not using the Rollout's canary deployment features. We took the approach of solving one problem at a time to reduce complexity.
 
-Simultaneously, create a Rollout Ingress (hereafter "canary Ingress"). This Ingress uses the same host address as the existing Ingress but leverages [Nginx Ingress Controller's canary annotation](https://kubernetes.github.io/ingress-nginx/examples/canary/) feature. By setting `nginx.ingress.kubernetes.io/canary: "true"` and `nginx.ingress.kubernetes.io/canary-weight: "0"`, 0% of traffic to that host address gets routed to the canary Ingress. In this state, all traffic still flows through the existing Ingress to the Deployment.
+Simultaneously, create a Rollout Ingress (hereafter "canary Ingress"). This Ingress uses the same host address (Host Address, a domain name or IP address used to access a specific server or service on a network) as the existing Ingress but leverages [Nginx Ingress Controller's canary annotation (Annotation, key-value pairs for attaching metadata to Kubernetes resources, primarily used by external tools and libraries)](https://kubernetes.github.io/ingress-nginx/examples/canary/) feature. By setting `nginx.ingress.kubernetes.io/canary: "true"` and `nginx.ingress.kubernetes.io/canary-weight: "0"`, 0% of traffic to that host address gets routed to the canary Ingress. In this state, all traffic still flows through the existing Ingress to the Deployment.
 
 **Step 2: Gradually shift traffic to canary Ingress**
 
@@ -238,7 +238,7 @@ Incrementally increase the canary Ingress's `canary-weight` value: 0% → 5% →
 
 **Step 3: Change the existing Ingress's backend service**
 
-With all traffic flowing through the canary Ingress, change the existing Ingress's backend service to the Rollout's Service. Since the existing Ingress isn't receiving traffic at this point, this change has no impact on users.
+With all traffic flowing through the canary Ingress, change the existing Ingress's backend service (Backend Service, the server-side application that processes client requests and executes business logic) to the Rollout's Service. Since the existing Ingress isn't receiving traffic at this point, this change has no impact on users.
 
 **Step 4: Return traffic to the existing Ingress**
 
@@ -266,14 +266,14 @@ Following the process outlined above, we started applying Argo Rollouts to all p
 
 We continued to iterate based on team feedback after adoption.
 
-First, we **added a deployment strategy selection option**. Initially, all deployments were configured as canary deployments. We received feedback that even very simple changes had to go through all validation stages, making deployment times too long. While you can instantly promote during a canary deployment via the dashboard or CLI with `kubectl argo rollouts promote --full`, we decided that an option to deploy as a rolling update from the start was also necessary.
+First, we **added a deployment strategy selection option**. Initially, all deployments were configured as canary deployments. We received feedback that even very simple changes had to go through all validation stages, making deployment times too long. While you can instantly promote during a canary deployment via the dashboard or CLI (Command Line Interface, an interface for operating programs or systems by entering text commands) with `kubectl argo rollouts promote --full`, we decided that an option to deploy as a rolling update from the start was also necessary.
 
-We updated the CI/CD pipeline (built with GitHub Actions) so that engineers could choose between rolling update and canary strategies when triggering the workflow. The Rollout template also renders differently based on the selected option.
+We had been building our CI/CD pipeline (Continuous Integration/Continuous Deployment Pipeline, an automated workflow covering the entire process from code changes through testing, building, and deployment) with GitHub Actions (GitHub Actions, a CI/CD and workflow automation platform provided by GitHub). As shown in Photo 6 below, we updated it so that engineers could choose between rolling update and canary strategies when triggering the workflow (Workflow, a series of automated steps defined to achieve a specific goal). The Rollout template also renders differently based on the selected option.
 
 ![Deployment strategy selection in the GitHub workflow](../../../assets/argo-rollouts-canary-deployment-fig6.png)
 *Photo 6: Deployment strategy selection in the GitHub workflow (Source: author)*
 
-Second, we **improved Slack notifications**. Initially, we only sent notifications for major events. Based on team feedback, we refined them to be more useful: we added links to jump directly to the dashboard, organized each deployment stage's progress in threads to reduce notification fatigue, and configured only major changes like deployment completion or rollback to appear as channel posts.
+Second, we **improved Slack notifications**. Initially, we only sent notifications for major events. Based on team feedback, we refined them to be more useful: as shown in Photo 7 below, we added links to jump directly to the dashboard, organized each deployment stage's progress in threads to reduce notification fatigue, and configured only major changes like deployment completion or rollback to appear as channel posts.
 
 ![DelightRoom's Argo Rollouts Slack notification](../../../assets/argo-rollouts-canary-deployment-fig7.png)
 *Photo 7: DelightRoom's Argo Rollouts Slack notification (Source: author)*
@@ -286,7 +286,7 @@ Shortly after joining, I took on a large project that changed the team's entire 
 
 The two things I considered most important during this project were: first, **handling massive traffic reliably**, and second, **reducing fatigue and improving convenience for the engineers who actually perform deployments**. No matter how technically excellent a system is, if the people using it find it inconvenient, it's not a successful adoption.
 
-To this end, I put significant effort into **documentation for engineers**. I wrote and shared an "Argo Rollouts Usage Guide and Considerations" document on Notion, covering the background of the transition from Deployment to Argo Rollouts, how the deployment process changes, how deployment monitoring and control differ, along with a troubleshooting guide and FAQ.
+To this end, I put significant effort into **documentation for engineers**. I wrote and shared an "Argo Rollouts Usage Guide and Considerations" document on Notion as shown in Photo 8 below, covering the background of the transition from Deployment to Argo Rollouts, how the deployment process changes, how deployment monitoring and control differ, along with a troubleshooting guide and FAQ.
 
 ![Documentation for engineers on Argo Rollouts usage](../../../assets/argo-rollouts-canary-deployment-fig8.png)
 *Photo 8: Documentation for engineers on Argo Rollouts usage (partial) (Source: author)*
