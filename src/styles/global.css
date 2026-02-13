@@ -208,22 +208,21 @@ hr {
 }
 
 /* Shiki dual-theme: light by default, dark when data-theme="dark" */
-.astro-code,
-.astro-code span {
-	color: var(--shiki-light) !important;
-	background-color: var(--shiki-light-bg) !important;
-}
 .astro-code {
 	background-color: #f6f8fa !important;
 	border: 1px solid rgb(var(--gray-light));
 }
-[data-theme="dark"] .astro-code,
-[data-theme="dark"] .astro-code span {
-	color: var(--shiki-dark) !important;
-	background-color: var(--shiki-dark-bg) !important;
+.astro-code span {
+	color: var(--shiki-light) !important;
+	background-color: transparent !important;
 }
 [data-theme="dark"] .astro-code {
+	background-color: var(--shiki-dark-bg) !important;
 	border-color: transparent;
+}
+[data-theme="dark"] .astro-code span {
+	color: var(--shiki-dark) !important;
+	background-color: transparent !important;
 }
 
 .sr-only {
