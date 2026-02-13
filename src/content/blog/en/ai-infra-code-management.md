@@ -9,7 +9,7 @@ tags: ["Infrastructure as Code", "Claude Code", "AWS", "Pulumi", "DevOps"]
 
 > **Originally published** on the [DelightRoom Tech Blog](https://medium.com/delightroom/ai%EB%A1%9C-%EC%9A%B0%EB%A6%AC-%ED%9A%8C%EC%82%AC-%EC%9D%B8%ED%94%84%EB%9D%BC-%EC%BD%94%EB%93%9C-%EC%99%84%EB%B2%BD-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0-c9f5cb7f2ef6). Republished here on the author's personal blog.
 
-I work as an SRE in DelightRoom's Foundation group. The Foundation group is responsible for the infrastructure, data pipelines, and frontend foundations that support all of DelightRoom's products. We use **Pulumi** to manage our infrastructure as code. Among various IaC tools like Terraform and Ansible, we chose Pulumi because it lets us define infrastructure using general-purpose programming languages like TypeScript and Python.
+I work as an SRE (Site Reliability Engineer) in DelightRoom's Foundation group. The Foundation group is responsible for the infrastructure, data pipelines, and frontend foundations that support all of DelightRoom's products. We use **Pulumi** to manage our infrastructure as code. Among various IaC (Infrastructure as Code — a practice of defining and managing infrastructure through code) tools like Terraform and Ansible, we chose Pulumi because it lets us define infrastructure using general-purpose programming languages like TypeScript and Python.
 
 ![Pulumi logo](../../../assets/ai-infra-code-management-1.png)
 *Figure 1: Pulumi Logo*
@@ -23,7 +23,7 @@ One of my key responsibilities is maintaining and improving a stable infrastruct
 ...
 ```
 
-Resources either existed in code but not in AWS, or had different configuration values — this was **Drift**. Drift refers to a state where code and actual resources are out of sync, sometimes described as "broken IaC."
+Resources either existed in code but not in AWS (Amazon Web Services), or had different configuration values — this was **Drift**. Drift refers to a state where code and actual resources are out of sync, sometimes described as "broken IaC."
 
 Nobody knew exactly when or why this drift had started. It was the accumulated result of quick console fixes and changes made without code updates over a long period of time.
 
@@ -56,7 +56,7 @@ For this value to be maintained, the following three elements must always be in 
 - **State**: A snapshot of the current infrastructure managed by Pulumi.
 - **Resources**: The actual infrastructure existing in the cloud.
 
-The important point here is that code cannot directly affect resources. In the diagram above, only a dotted arrow exists between code and resources, meaning code must go through state before it can be reflected in resources.
+The important point here is that code cannot directly affect resources. In Figure 2, only a dotted arrow exists between code and resources, meaning code must go through state before it can be reflected in resources.
 
 When a developer defines the intended infrastructure state in code, Pulumi first compares it with the state file (Synchronize/Compare) to calculate what changes are needed. And because state is linked to resources (Link/Reflect), actual infrastructure changes become possible.
 
@@ -118,9 +118,9 @@ Our team chose **Claude Code** among various AI tools for this work, for the fol
 
 First, Claude Code is specialized for code work. The Claude model itself has strong capabilities in code understanding and generation, and Claude Code builds on this to handle file system exploration, code modification, and terminal command execution in a single workflow. This made it well-suited for our task, where reading and modifying infrastructure code and executing commands are the core operations.
 
-Second, Claude Code provides a terminal-based UI. There's no need to switch to a separate web interface — you can use it directly in the terminal environment where you normally work, allowing it to naturally integrate into existing workflows.
+Second, Claude Code provides a terminal-based UI. There's no need to switch to a separate web interface (a screen for interacting with the system through a web browser) — you can use it directly in the terminal environment where you normally work, allowing it to naturally integrate into existing workflows.
 
-Most importantly, Claude Code allows workflow customization through Rules, Skills, and Agents. This feature lets you explicitly define rules to protect production resources (like "never run `pulumi up`"), and template frequently used commands and procedures to efficiently handle repetitive tasks. The ability to maximize agent effectiveness while ensuring safety was the decisive factor for this project.
+Most importantly, Claude Code allows workflow (a series of processes or procedures through which tasks progress) customization through Rules, Skills, and Agents. This feature lets you explicitly define rules to protect production resources (like "never run `pulumi up`"), and template frequently used commands and procedures to efficiently handle repetitive tasks. The ability to maximize agent effectiveness while ensuring safety was the decisive factor for this project.
 
 ## Implementing Drift Recovery with an AI Agent
 
@@ -168,7 +168,7 @@ The first is **prohibiting `pulumi up`**. Since `pulumi up` applies code state t
 
 The second is **treating actual resources as the Source of Truth**. Rather than changing resources to match code, we modify code to match the current production resource state — reinforcing the principle of not touching the stable production environment.
 
-The third is **stack isolation**. Under the principle that dev and prod environments must never affect each other, we required running `preview` on both stacks after any code change to ensure modifications to one don't cause unintended effects on the other.
+The third is **stack isolation** (a stack being an independent deployment unit of the same infrastructure code, e.g., dev, prod). Under the principle that dev and prod environments must never affect each other, we required running `preview` on both stacks after any code change to ensure modifications to one don't cause unintended effects on the other.
 
 ```markdown
 # Pulumi Safety Rules
@@ -218,7 +218,7 @@ When `~` appears, configuration values differ between code and AWS. In this case
 
 #### code-conventions.md
 
-Finally, we defined code convention rules to ensure code generated or modified by the Agent maintains consistency with the existing codebase. Stack-specific configuration values use environment-specific config files rather than hardcoding. Variable names follow `camelCase`, constants follow `UPPER_SNAKE_CASE`, and resource naming uses common helper functions from the project.
+Finally, we defined code convention rules to ensure code generated or modified by the Agent maintains consistency with the existing codebase. Stack-specific configuration values use environment-specific config files rather than hardcoding. Variable names follow `camelCase`, constants follow `UPPER_SNAKE_CASE`, and resource naming uses common helper functions (utility functions that simplify repetitive tasks) from the project.
 
 ```typescript
 // Stack Configuration
@@ -242,7 +242,7 @@ const instanceType = pulumi.getStack() === "prod" ? "t3.large" : "t3.medium";
 
 One additional principle applied across all Rules: when the situation is ambiguous or needs verification, the Agent must always ask the user for confirmation rather than making arbitrary decisions.
 
-Using Claude Code's `AskUserQuestion` tool, when modifying sensitive security settings like security groups or IAM policies, the Agent pauses and seeks the user's judgment. Similarly, when multiple resolution approaches exist or when AWS state differs from expectations, the user confirmation step ensures safety.
+Using Claude Code's `AskUserQuestion` tool (a tool in Claude Code that asks the user questions to get confirmation), when modifying sensitive security settings like security groups (Security Groups — virtual firewalls in AWS that control instance traffic) or IAM (Identity and Access Management — an AWS service for managing user access permissions) policies, the Agent pauses and seeks the user's judgment. Similarly, when multiple resolution approaches exist or when AWS state differs from expectations, the user confirmation step ensures safety.
 
 ### Skills: Templating Repetitive Tasks
 
@@ -306,7 +306,7 @@ This Skill resolves `- delete` drift. When a resource has already been deleted f
 
 The most critical step is confirming the resource was actually deleted from AWS before removing it from state. Removing from state without verification could sever the connection to a resource that actually exists, causing bigger problems. A resource is considered deleted only when the AWS CLI returns a 404 response or "not found" error.
 
-Once deletion is confirmed, find the resource's URN using `pulumi stack --show-urns`. URNs follow the format `urn:pulumi:<stack>::<project>::<type>::<name>`. Then remove it from state with `pulumi state delete "<URN>"`.
+Once deletion is confirmed, find the resource's URN (Uniform Resource Name — a unique identifier for resources in Pulumi) using `pulumi stack --show-urns`. URNs follow the format `urn:pulumi:<stack>::<project>::<type>::<name>`. Then remove it from state with `pulumi state delete "<URN>"`.
 
 After removal from state, delete the code that defined the resource and run `preview` on both stacks to confirm cleanup is complete.
 
@@ -395,7 +395,7 @@ Termination conditions were also defined in three categories. When both stacks s
 | BLOCKED | Cannot proceed without user input |
 ```
 
-When multiple drifts existed in the same directory, subagents divided the work. For example, within one directory, Subagent 1 would handle `+ create` drifts while Subagent 2 handled `~ update` drifts.
+When multiple drifts existed in the same directory, subagents (subordinate Agents that the main Agent delegates specific tasks to, operating in independent contexts) divided the work. For example, within one directory, Subagent 1 would handle `+ create` drifts while Subagent 2 handled `~ update` drifts.
 
 However, since simultaneously modifying the same code could cause conflicts, subagents were forced to execute sequentially. The next subagent only started after the previous one completed its work and verification.
 
@@ -412,7 +412,7 @@ Based on the Rules, Skills, and Agents defined above, the actual work follows th
 
 Use the `drift-status` Skill to check the current state of both dev and prod stacks. This step collects the full drift list and classifies each as `+ create`, `- delete`, or `~ update`.
 
-The `preview` itself may fail due to TypeScript compilation errors, unset environment variables, module dependency issues, and other causes. Since these errors make drift classification impossible, the Agent first resolves these basic errors to get `preview` running normally before starting drift resolution.
+The `preview` itself may fail due to TypeScript compilation errors, unset environment variables, module (an independent unit that bundles related functionality or code together) dependency issues, and other causes. Since these errors make drift classification impossible, the Agent first resolves these basic errors to get `preview` running normally before starting drift resolution.
 
 Once `preview` runs successfully, the Agent creates a prioritized work list based on the collected information. Typically, independent resources without dependencies are processed first, while complex resources that reference others are handled later.
 
@@ -465,7 +465,7 @@ After working with Claude Code, I could confirm all stacks showing the message t
 ![After — preview results showing no updates needed](../../../assets/ai-infra-code-management-7.png)
 *Figure 7: After — Preview Results Showing No Updates Needed (Same stack)*
 
-The Before-After above shows a representative single stack. In practice, this process was repeated across multiple stacks.
+Figures 6 and 7 above show the Before-After of a representative single stack. In practice, this process was repeated across multiple stacks.
 
 The time savings were also significant. Manually resolving dozens of drifts — checking each resource's state, determining the appropriate action, modifying code, and validating — would take an average of 20-30 minutes per resource at a conservative estimate, totaling 6-8 weeks overall. Using the Agent, we compressed this to just a few days.
 
@@ -500,13 +500,13 @@ As AI tools continue to advance, I believe the ability to define what to build, 
 
 ## Beyond Management to Expansion: Infrastructure Operations with AI Agents
 
-This project resolved existing drift, but there's no guarantee new drift won't occur. To prevent this, we plan to add drift detection automation to our CI/CD pipeline.
+This project resolved existing drift, but there's no guarantee new drift won't occur. To prevent this, we plan to add drift detection automation to our CI/CD pipeline (Continuous Integration/Continuous Delivery Pipeline — an automated process for building, testing, and deploying code changes).
 
 We'll also build a process that automatically runs `pulumi preview` when code is pushed to specific directories or infrastructure-related PRs are merged, checking for drift.
 
 Periodic `preview` execution will also be necessary, since someone might urgently modify a resource in the console without updating the code.
 
-By combining event-driven and periodic execution, we can detect and address drift early before it accumulates. When drift is detected, a Slack alert will be sent. Looking further ahead, we envision the Agent directly analyzing and resolving drift in the CI stage.
+By combining event-driven and periodic execution, we can detect and address drift early before it accumulates. When drift is detected, a Slack alert will be sent. Looking further ahead, we envision the Agent directly analyzing and resolving drift in the CI (Continuous Integration — a practice of automatically building and testing code changes) stage.
 
 We also plan to further refine the Agent workflow. While the current setup focuses on drift resolution, infrastructure work encompasses many other types. We're envisioning an Agent that automatically applies security best practices when creating resources for new services, an Agent that guides migration procedures when moving resources to different regions or accounts, and an Agent that identifies security vulnerabilities or cost optimization opportunities in current infrastructure settings.
 
@@ -515,3 +515,7 @@ By developing additional Agents with dedicated Rules and Skills for each work ty
 IaC Drift is a problem that can occur in any organization, and once it starts accumulating, it becomes increasingly difficult to resolve. Through this project, we resolved months of neglected technical debt and established a management system to prevent the same problem from recurring.
 
 AI Agents aren't a silver bullet, but with clear rules and proper collaboration practices, they can become reliable colleagues. I hope this post serves as a helpful reference for anyone facing similar challenges.
+
+⏰ We're looking for people to change mornings with Alarmy at DelightRoom 🙌
+
+[**→ View DelightRoom Job Openings** ⏰](https://team.alar.my/?utm_source=medium&utm_medium=dan&utm_campaign=ai_infra_code)
