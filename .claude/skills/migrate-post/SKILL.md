@@ -21,6 +21,10 @@ Migrate an externally published blog post to this personal blog in both Korean a
 | `blog.blux.ai` | blux | blux 기술 블로그 | blux Tech Blog |
 | `medium.com/delightroom` | DelightRoom | DelightRoom 기술 블로그 | DelightRoom Tech Blog |
 
+## Content Fidelity Rule
+
+**CRITICAL:** Migrated posts must be EXACTLY the same as the original — do NOT omit, condense, or summarize any information. This applies to BOTH the KO and EN versions. Every paragraph, sentence, parenthetical explanation, editorial phrasing, transition sentence, closing section, and author bio from the original must be preserved in full. The only allowed modification is fixing obvious typos (e.g., a misspelled word).
+
 ## Procedure
 
 ### Step 1 — Detect source
@@ -141,9 +145,9 @@ tags: ["{tag1}", "{tag2}", "{tag3}", "{tag4}", "{tag5}"]  # same 5 tags as KO po
 2. Naturally adapted English translation of the full article:
    - Keep the same section structure, headings, and all code blocks verbatim
    - Translate Korean code comments to English
-   - Remove redundant parenthetical Korean-to-English definitions that are unnecessary in English
+   - Translate ALL parenthetical explanations faithfully — do NOT remove them even if they seem obvious in English (e.g., if the KO version has "깃(Git, 분산 버전 관리 시스템으로...)", the EN version must include the equivalent explanation)
    - Use a direct, tutorial-style voice
-   - Do NOT summarize or skip any sections — translate the complete article
+   - Do NOT summarize, omit, or skip any sections, paragraphs, or sentences — translate the complete article with full fidelity
 
 **Caution:** Do NOT include the hero image as an inline image in the body. The hero image is already rendered by the layout via the frontmatter `heroImage` field — duplicating it in the body shows it twice on the page.
 
