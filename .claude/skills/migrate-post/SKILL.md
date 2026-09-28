@@ -19,7 +19,8 @@ Migrate an externally published blog post to this personal blog in both Korean a
 | Domain pattern | Company | KO attribution | EN attribution |
 |---|---|---|---|
 | `blog.blux.ai` | blux | blux 기술 블로그 | blux Tech Blog |
-| `medium.com/delightroom` | DelightRoom | DelightRoom 기술 블로그 | DelightRoom Tech Blog |
+| `delightroom.com/blog` | DelightRoom | 딜라이트룸 제품 블로그 | DelightRoom Product Blog |
+| `medium.com/delightroom` (legacy — the blog moved to `delightroom.com/blog`) | DelightRoom | DelightRoom 기술 블로그 | DelightRoom Tech Blog |
 
 ## Content Fidelity Rule
 
