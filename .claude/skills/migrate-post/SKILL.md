@@ -1,6 +1,6 @@
 ---
 name: migrate-post
-description: Migrate a blog post from any source to the personal blog (EN/KO)
+description: Migrate a blog post from any source to the personal blog (EN/KO); when DelightRoom has an official EN edition, use it instead of translating
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, WebFetch, AskUserQuestion, Task
 ---
 
@@ -14,6 +14,8 @@ Migrate an externally published blog post to this personal blog in both Korean a
 /migrate-post <source-url>
 ```
 
+`<source-url>` is normally the Korean original. If it is an official DelightRoom EN edition URL (`delightroom.com/blog/en/...`) and the KO post already exists in this repo, only the EN post is (re)created from that edition: run Steps 2b, 7a, 8, 9 (replacement variant), and 10.
+
 ## Known Sources
 
 | Domain pattern | Company | KO attribution | EN attribution |
@@ -22,9 +24,13 @@ Migrate an externally published blog post to this personal blog in both Korean a
 | `delightroom.com/blog` | DelightRoom | 딜라이트룸 제품 블로그 | DelightRoom Product Blog |
 | `medium.com/delightroom` (legacy — the blog moved to `delightroom.com/blog`) | DelightRoom | DelightRoom 기술 블로그 | DelightRoom Tech Blog |
 
+**Official EN editions take priority.** DelightRoom publishes an English edition of most posts (including Medium-era ones) at `https://delightroom.com/blog/en/<english-slug>`. When one exists, it is the source of the EN post: use its text verbatim (Step 7a) instead of translating the Korean text yourself. Check for it in Step 2b.
+
 ## Content Fidelity Rule
 
 **CRITICAL:** Migrated posts must be EXACTLY the same as the original — do NOT omit, condense, or summarize any information. This applies to BOTH the KO and EN versions. Every paragraph, sentence, parenthetical explanation, editorial phrasing, transition sentence, closing section, and author bio from the original must be preserved in full. The only allowed modification is fixing obvious typos (e.g., a misspelled word).
+
+When an official EN edition exists (Step 2b), the EN post must match that edition's text exactly — it is a copy of the published English text, not a translation of the KO text. Deviations from it are allowed only as listed in Step 7a.
 
 ## Procedure
 
@@ -44,6 +50,14 @@ Make two `WebFetch` calls to the source URL:
 
 1. **Metadata fetch**: Extract the publication date (`pubDate`), title, subtitle/description (if present in the source), hero/featured image URL, and any inline image URLs.
 2. **Full content fetch**: Get the **complete, verbatim Korean article body** — every paragraph, heading, list, code block, blockquote, and image reference. **Do NOT summarize or truncate.** If the content is very long, make multiple WebFetch calls with prompts targeting different sections to reconstruct the full article.
+
+### Step 2b — Check for an official EN edition (DelightRoom)
+
+For DelightRoom posts, find out whether an English edition exists before writing anything:
+
+1. The KO page does not link to its EN edition, so search the EN listing for a slug matching the post: `curl -sL https://delightroom.com/blog/en | grep -o 'href="https://delightroom.com/blog/en/[^"]*"'` (the listing may span several pages).
+2. If nothing matches, use `AskUserQuestion` to ask the user whether an EN edition exists and for its URL.
+3. If one exists, record its URL — it becomes the EN attribution link and the source for Step 7a — and fetch it with `curl -sL`. The pages are server-rendered; convert the `<main>` HTML with a stdlib `html.parser` script rather than relying on `WebFetch` summaries.
 
 ### Step 3 — Derive slug
 
@@ -81,7 +95,7 @@ For each inline image found in the article body:
 - **Preserve numbered prefixes** from the original source (e.g., `사진 1:`, `그림 2:`, `Figure 1:`). If the source uses them, keep them in the caption.
 - During the content fetch (Step 2), extract all figure captions, `<figcaption>` elements, image alt texts, and any text rendered below/beside images in the original post.
 - For KO posts: use the original Korean caption verbatim.
-- For EN posts: naturally translate the caption to English.
+- For EN posts: naturally translate the caption to English — unless an official EN edition exists, in which case use its captions verbatim (Step 7a).
 - If the original source has no caption for an image, create a concise descriptive caption based on the image's context in the article.
 - Caption format examples:
   - `*사진 1: Pulumi 로고*`
@@ -124,7 +138,47 @@ tags: ["{tag1}", "{tag2}", "{tag3}", "{tag4}", "{tag5}"]  # exactly 5 tags
 
 ### Step 7 — Create EN post
 
-Create `src/content/blog/en/{slug}.md` with:
+Create `src/content/blog/en/{slug}.md`. Use **Step 7a** when an official EN edition exists (Step 2b); use **Step 7b** only when it does not.
+
+#### Step 7a — From the official EN edition (preferred)
+
+**Frontmatter:**
+```yaml
+---
+title: "{the EN page's h1, verbatim}"
+description: "{the EN page's subtitle — og:description without the trailing ' | Engineering' category suffix}"
+pubDate: {same YYYY-MM-DD as the KO post — the EN page's published_time can differ by a day}
+heroImage: ../../../assets/{slug}-hero.{ext}  # same image as the KO post
+heroImageCaption: "{the EN page's hero caption, or 'Thumbnail image (...)' with the same generation suffix as its figure captions}"
+tags: ["{tag1}", "{tag2}", "{tag3}", "{tag4}", "{tag5}"]  # same 5 tags as KO post
+---
+```
+
+**Body — in this exact order:**
+1. Attribution blockquote linking to the **EN edition URL**:
+   ```
+   > **Originally published** on the [{EN attribution name}]({en-edition-url}). Republished here on the author's personal blog.
+   ```
+2. The EN edition's article body, **verbatim**, converted to Markdown with these rules:
+   - Take `<main>` from the first `<h2>` up to the table of contents that follows the body (the TOC appears twice; ignore both). Drop three import artifacts: the subtitle rendered as an `<h2>`, a stray paragraph containing only `1`, and the hero image repeated as the first inline figure (its `<figcaption>` becomes `heroImageCaption`).
+   - Headings: the page uses `<h3>` for sections → `##`. When the page flattens nested headings to h2/h3, restore the KO post's nesting (`###`/`####`) so both languages share one outline; heading text stays verbatim.
+   - Captions: keep the page's caption verbatim (`Photo N:`, `Formula N:`, …) but strip the surrounding angle brackets (`<Photo 1: …>`). Alt text = caption without the numbered prefix and the trailing generation/source note. Inline references such as `<Photo 2>` stay as-is (they render as text). Reuse the KO post's local images — do not re-download the CDN webp copies.
+   - Code blocks: verbatim with indentation intact; add fence languages (`yaml`, `markdown`, …) where obvious. A one-cell "callout" table becomes a blockquote; tables keep plain header cells.
+   - Steps typed as consecutive `1.` / `2.` paragraphs become one tight numbered list.
+   - Keep the page's em-dashes and quotes as published.
+3. **Verify fidelity:** compare the tag-stripped page text with the syntax-stripped Markdown after removing all whitespace — they must be identical up to the page's share/contents widgets — and compare per-section block counts (headings, images, captions, tables, lists, code blocks) with the KO post. Report any place where the EN edition itself differs from the KO post (e.g. a dropped paragraph or a missing recruiting footer).
+
+**Allowed deviations from the EN edition** — put each one to the user with `AskUserQuestion` before writing the file:
+- Content the import lost (e.g. a table that survived only as its caption paragraph): restore it from the KO post or the previous translated EN post, under the page's caption.
+- Korean left inside code blocks (comments) or code spans (placeholders such as `<스택>`): translate.
+- The author's name romanized differently (e.g. "Seonhong"): use "Sunhong Min".
+- Obvious typos introduced by the EN edition (e.g. `stpes`, curly quotes inside code spans): fix under the Content Fidelity Rule and list them in the report.
+
+**Caution:** Do NOT include the hero image as an inline image in the body. The hero image is already rendered by the layout via the frontmatter `heroImage` field — duplicating it in the body shows it twice on the page.
+
+**Reference:** `src/content/blog/en/ai-agent-authorization.md` (EN edition), `src/content/blog/en/argo-rollouts-canary-deployment.md` (EN edition with a restored table)
+
+#### Step 7b — By translation (only when no EN edition exists)
 
 **Frontmatter:**
 ```yaml
@@ -177,11 +231,15 @@ git branch -d feat/blog-{slug}
 git push origin --delete feat/blog-{slug}
 ```
 
+**Replacement variant** — when an official EN edition replaces an existing translated EN post, only `src/content/blog/en/{slug}.md` changes: use branch `fix/blog-{slug}-en`, commit and PR title `Replace {slug} EN post with DelightRoom EN version`, and put the EN edition URL and every allowed deviation in the PR body.
+
 ### Step 10 — Report
 
 Summarize the results:
 
 - Confirm both posts were created and the PR was merged
+- State where the EN post came from (the official EN edition URL, or translation) and list every deviation from that source, including typo fixes
+- Flag where the EN edition itself differs from the KO post
 - List the file paths for both posts
 - List any downloaded images
 - **Flag any placeholder images** (`<!-- TODO -->`) that need manual replacement
